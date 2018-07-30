@@ -7,6 +7,12 @@ import pickle
 import os
 pd.core.common.is_list_like = pd.api.types.is_list_like
 import pandas_datareader.data as web
+from collections import Counter
+import numpy as np
+from sklearn import svm
+from sklearn import cross_validation
+from sklearn import neighbors
+from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 
 #Getting a list from S&P 500 companies from Wikipedia.
 
@@ -18,8 +24,6 @@ def save_sp500_tickers():
 
     for row in table.findAll('tr')[1:]:
         ticker = row.findAll('td')[0].text
-#This eliminates all of the tickers the get_data_from_morningstar function has a difficult time extracting
-
         if ticker == 'ANDV':
             next
         elif ticker == 'BKNG':
@@ -105,3 +109,92 @@ def compile_data():
         main_df.to_csv('sp500_joined_closes.csv')
 
 compile_data()
+
+def process_data_for_labels(ticker):
+    hm_days = 7
+    df = pd.read_csv('sp500_joined_closes.csv', index_col=0)
+    tickers = df.columns.values.tolist()
+    df.fillna(0, inplace=True)
+
+    for i in range(1,hm_days+1):
+        df['{}_{}d'.format(ticker,i)] = (df[ticker].shift(-i) - df[ticker]) / df[ticker]
+
+    df.fillna(0, inplace=True)
+    return tickers, df
+
+process_data_for_labels('AAPL')
+
+def buy_sell_hold(*args):
+    cols = [c for c in args]
+    requirements = 0.02
+    for col in cols:
+        if col > requirements:
+            return 1
+        if col < -requirements:
+            return -1
+    return 0
+
+def extract_featuresets(ticker):
+    tickers, df = process_data_for_labels(ticker)
+
+    df['{}_target'.format(ticker)] = list(map( buy_sell_hold,
+                                               df['{}_1d'.format(ticker)],
+                                               df['{}_2d'.format(ticker)],
+                                               df['{}_3d'.format(ticker)],
+                                               df['{}_4d'.format(ticker)],
+                                               df['{}_5d'.format(ticker)],
+                                               df['{}_6d'.format(ticker)],
+                                               df['{}_7d'.format(ticker)]))
+
+    vals = df['{}_target'.format(ticker)].values.tolist()
+    str_vals = [str(i) for i in vals]
+    print('Data spread:', Counter(str_vals))
+
+    df.fillna(0, inplace=True)
+    df = df.replace([np.inf, -np.inf], np.nan)
+    df.dropna(inplace=True)
+
+    df_vals = df[[ticker for ticker in tickers]].pct_change()
+    df_vals = df_vals.replace([np.inf, -np.inf], 0)
+    df_vals.fillna(0, inplace=True)
+
+    X = df_vals.values
+    y = df['{}_target'.format(ticker)].values
+    return X, y, df
+
+extract_featuresets('AAPL')
+
+def do_ml(ticker):
+    X, y, df = extract_featuresets(ticker)
+
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.25)
+
+    clf = VotingClassifier([('lsvc', svm.LinearSVC()),
+                            ('knn', neighbors.KNeighborsClassifier()),
+                            ('rfor', RandomForestClassifier())])
+
+    clf.fit(X_train, y_train)
+    confidence = clf.score(X_test, y_test)
+    print('accuracy:', confidence)
+    predictions = clf.predict(X_test)
+    print('predicted class counts:', Counter(predictions))
+    print()
+    print()
+    return confidence
+
+do_ml('AAPL')
+
+from statistics import mean
+
+with open('sp500tickers.pickle', 'rb') as f:
+    tickers = pickle.load(f)
+
+accuracies = []
+for count, ticker in enumerate(tickers):
+
+    if count% 10 == 0:
+        print(count)
+
+        accuracy = do_ml(ticker)
+        accuracies.append(accuracy)
+        print('{} accuracy: {}. Average accuracy:'.format(ticker, accuracy, mean(accuracies)))
