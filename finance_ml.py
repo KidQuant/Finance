@@ -198,3 +198,5 @@ for count, ticker in enumerate(tickers):
         accuracy = do_ml(ticker)
         accuracies.append(accuracy)
         print('{} accuracy: {}. Average accuracy:'.format(ticker, accuracy, mean(accuracies)))
+
+nsd
