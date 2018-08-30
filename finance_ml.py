@@ -39,20 +39,17 @@ def get_data_from_robinhood(reload_sp500=False):
     if reload_sp500:
         tickers = save_sp500_tickers()
     else:
-        with open('sp500tickers.pickle', 'rb') as f:
+        with open("sp500tickers.pickle", "rb") as f:
             tickers = pickle.load(f)
-
     if not os.path.exists('stock_dfs'):
         os.makedirs('stock_dfs')
 
-    start = dt.datetime(2010,1,1)
+    start = dt.datetime(2010, 1, 1)
     end = dt.datetime.now()
-
     for ticker in tickers:
         print(ticker)
-
-        if not os.path.exists('stock_dfs/{}.csv'.format(tickers)):
-            df = web.DataReader(ticker, 'robinhood', start, end)
+        if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
+            df = web.DataReader(ticker, 'morningstar', start, end)
             df.reset_index(inplace=True)
             df.set_index('begins_at', inplace=True)
             df = df.drop('symbol', axis=1)
@@ -61,9 +58,6 @@ def get_data_from_robinhood(reload_sp500=False):
             print('Already have {}'.format(ticker))
 
 get_data_from_robinhood()
-
-start = dt.datetime(2000,1,1)
-end = dt.datetime.now()
 
 web.DataReader('AAPL', 'robinhood', start, end).head()
 
