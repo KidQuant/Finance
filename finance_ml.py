@@ -62,7 +62,10 @@ def get_data_from_robinhood(reload_sp500=False):
 
 get_data_from_robinhood()
 
+start = dt.datetime(2000,1,1)
+end = dt.datetime.now()
 
+web.DataReader('AAPL', 'robinhood', start, end).head()
 
 def compile_data():
     with open('sp500tickers.pickle', 'rb') as f:
@@ -72,10 +75,10 @@ def compile_data():
 
     for count, ticker in enumerate(tickers):
         df = pd.read_csv('stock_dfs/{}.csv'.format(ticker))
-        df.set_index('Date', inplace=True)
+        df.set_index('begins_at', inplace=True)
 
-        df.rename(columns={'Close':ticker}, inplace=True)
-        df.drop(['open', 'high', 'low', 'volume'], 1, inplace=True)
+        df.rename(columns={'close_price':ticker}, inplace=True)
+        df.drop(['high_price', 'interpolated', 'low_price', 'open_price','session', 'volume'], 1, inplace=True)
 
         if main_df.empty:
             main_df = df
