@@ -59,8 +59,6 @@ def get_data_from_robinhood(reload_sp500=False):
 
 get_data_from_robinhood()
 
-web.DataReader('AAPL', 'robinhood', start, end).head()
-
 def compile_data():
     with open('sp500tickers.pickle', 'rb') as f:
         tickers = pickle.load(f)
@@ -99,7 +97,7 @@ def process_data_for_labels(ticker):
     df.fillna(0, inplace=True)
     return tickers, df
 
-process_data_for_labels('AAPL')
+process_data_for_labels('XOM')
 
 def buy_sell_hold(*args):
     cols = [c for c in args]
@@ -139,7 +137,7 @@ def extract_featuresets(ticker):
     y = df['{}_target'.format(ticker)].values
     return X, y, df
 
-extract_featuresets('AAPL')
+extract_featuresets('XOM')
 
 def do_ml(ticker):
     X, y, df = extract_featuresets(ticker)
@@ -159,7 +157,7 @@ def do_ml(ticker):
     print()
     return confidence
 
-do_ml('AAPL')
+do_ml('XOM')
 
 from statistics import mean
 
@@ -175,5 +173,3 @@ for count, ticker in enumerate(tickers):
         accuracy = do_ml(ticker)
         accuracies.append(accuracy)
         print('{} accuracy: {}. Average accuracy:'.format(ticker, accuracy, mean(accuracies)))
-
-asd
