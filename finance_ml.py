@@ -49,7 +49,7 @@ def get_data_from_robinhood(reload_sp500=False):
     for ticker in tickers:
         print(ticker)
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
-            df = web.DataReader(ticker, 'morningstar', start, end)
+            df = web.DataReader(ticker, 'robinhood', start, end)
             df.reset_index(inplace=True)
             df.set_index('begins_at', inplace=True)
             df = df.drop('symbol', axis=1)
@@ -175,3 +175,5 @@ for count, ticker in enumerate(tickers):
         accuracy = do_ml(ticker)
         accuracies.append(accuracy)
         print('{} accuracy: {}. Average accuracy:'.format(ticker, accuracy, mean(accuracies)))
+
+asd
