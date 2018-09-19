@@ -26,12 +26,41 @@ from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
 import requests
-url = 'http://nypost.com/horoscope/aries-12-01-2013/'
+url = 'http://nypost.com/horoscope/tarus-01-01-2017/'
 page = requests.get(url)
 page.ok
 
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 url = 'http:/nypost.com/horoscope/taurus-12-01-2017/'
-content = urlopen(url)
+content = (url)
 soup = BeautifulSoup(content)
+
+from bs4 import BeautifulSoup
+import urllib.request
+import datetime
+import pandas as pd
+import requests
+import numpy as np
+import os
+
+baseurl = 'http://nypost.com/horoscope'
+signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces']
+
+start = pd.datetime(2015,1,1)
+end = datetime.datetime.today()
+rng = pd.date_range(start, end)
+
+scope = []
+zodiac = []
+pub_date = []
+
+for sign in signs:
+    print sign
+    for day in rng:
+        url = baseurl + sign + '-' + day.strftime('%m-%d-%Y') + '/'
+        page = requests.get(url)
+        if not page.ok:
+            continue
+        try:
+            content =
