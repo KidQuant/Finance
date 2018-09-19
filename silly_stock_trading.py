@@ -2,7 +2,7 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.optimizers import SGD
-import requests
+
 import numpy as np
 
 x_train = np.random.random((1000,20))
@@ -28,14 +28,14 @@ print(device_lib.list_local_devices())
 import requests
 url = 'http://nypost.com/horoscope/aries-12-01-2013/'
 page = requests.get(url)
-<<<<<<< HEAD
-=======
 page.ok
 
-import urllib
+import urllib2
 from bs4 import BeautifulSoup
 url = 'http:/nypost.com/horoscope/aries-12-01-2013/'
 content = urllib.urlopen(url).read()
 
-asd
->>>>>>> f1970b5020154262b08cc801a5639fc67ac441b2
+import urllib2.request
+from bs4 import BeautifulSoup
+url = 'http://nypost.com/horoscope/taurus-12-01-2017/'
+content = urllib2.urlopen(url).read()
