@@ -28,3 +28,14 @@ print(device_lib.list_local_devices())
 import requests
 url = 'http://nypost.com/horoscope/aries-12-01-2013/'
 page = requests.get(url)
+<<<<<<< HEAD
+=======
+page.ok
+
+import urllib
+from bs4 import BeautifulSoup
+url = 'http:/nypost.com/horoscope/aries-12-01-2013/'
+content = urllib.urlopen(url).read()
+
+asd
+>>>>>>> f1970b5020154262b08cc801a5639fc67ac441b2
