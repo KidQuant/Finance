@@ -2,7 +2,7 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
 from keras.optimizers import SGD
-
+import requests
 import numpy as np
 
 x_train = np.random.random((1000,20))
@@ -26,23 +26,5 @@ from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
 import requests
-url = 'http://nypost.com/horoscope/taurus-09-08-2018/'
+url = 'http://nypost.com/horoscope/aries-12-01-2013/'
 page = requests.get(url)
-page.ok
-
-import urllib.request
-from bs4 import BeautifulSoup
-import datetime
-import pandas as pd
-import requests
-import numpy as np
-import os
-
-baseurl = 'http://nypost.com/horoscope/'
-signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces']
-
-start = pd.datetime(2015,1,1)
-end = datetime.datetime.today()
-rng = pd.date_range(start, end)
-
-scope = []
