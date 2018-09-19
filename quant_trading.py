@@ -15,3 +15,24 @@ df[df['Split Ratio'] == 7.0]
 
 aapl_split = quandl.get('WIKI/' + 'AAPL', start_date = '2014-06-10')
 aapl_split.head()
+
+import statsmodels.tsa.stattools as ts
+cadf = ts.adfuller(aapl_split.Close)
+
+print('Augment Dickey Fuller')
+print('Test Statistic =',cadf[0])
+print('p-Value =',cadf[1])
+print('Criical Values =', cadf[4])
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+MSFT = quandl.get('WIKI/' + 'MSFT', start_date='2014-06-10')
+INTC = quandl.get('WIKI/' + 'INTC', start_date='2014-06-10')
+TIF = quandl.get('WIKI/' + 'TIF', start_date='2014-06-10')
+
+sns.jointplot(INTC.Close, aapl_split.Close, kind='reg');
+
+np.corrcoef(INTC.Close, aapl_split.Close)
+
+np.corrcoef(INTC.Close[:-7], aapl_split.Close[7:])
