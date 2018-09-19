@@ -30,7 +30,8 @@ url = 'http://nypost.com/horoscope/aries-12-01-2013/'
 page = requests.get(url)
 page.ok
 
-import urllib.request
+from urllib.request import urlopen
 from bs4 import BeautifulSoup
-url = 'http:/nypost.com/horoscope/aries-12-01-2013/'
-content = urllibrequest.urlopen(url).read()
+url = 'http:/nypost.com/horoscope/taurus-12-01-2017/'
+content = urlopen(url)
+soup = BeautifulSoup(content)
