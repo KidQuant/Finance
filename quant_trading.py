@@ -36,3 +36,7 @@ sns.jointplot(INTC.Close, aapl_split.Close, kind='reg');
 np.corrcoef(INTC.Close, aapl_split.Close)
 
 np.corrcoef(INTC.Close[:-7], aapl_split.Close[7:])
+
+#Google Trends
+
+aapl_trends = pd.read_csv('')
