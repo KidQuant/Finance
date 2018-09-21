@@ -38,5 +38,12 @@ np.corrcoef(INTC.Close, aapl_split.Close)
 np.corrcoef(INTC.Close[:-7], aapl_split.Close[7:])
 
 #Google Trends
+aapl_trends = pd.read_csv('multiTimeLine.csv', header=1)
 
-aapl_trends = pd.read_csv('')
+aapl_trends.tail()
+
+aapl_split_week = aapl_split.resample('W', convention = 'end').last()
+
+#trend and price corr
+
+np.corrcoef(aapl_trends['Apple: (Worldwide)'],aapl_split_week.Close)
