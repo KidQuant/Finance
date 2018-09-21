@@ -45,5 +45,5 @@ aapl_trends.tail()
 aapl_split_week = aapl_split.resample('W', convention = 'end').last()
 
 #trend and price corr
-
+9
 np.corrcoef(aapl_trends['Apple: (Worldwide)'],aapl_split_week.Close)
