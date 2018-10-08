@@ -118,3 +118,28 @@ def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
     bounds = tuple(bound for assets in range(num_assets))
     result = sco.minimize(neg_sharpe_ratio, num_assets*[1./num_assets,], args=args,
                         method = 'SLSQP', bounds = bounds, constraints=constraints)
+
+def portfolio_volatility(weights, mean_returns, cov_matrix):
+    return portfolio_annualized_performance(weights, mean_returns, cov_matrix)[0]
+
+def min_variance(mean_returns, cov_matrix):
+    num_assets = len(mean_returns)
+    args = (mean_returns, cov_matrix)
+    constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) -1})
+    bound = (0.0, 1.0)
+    bounds = tuple(bound for asset in range(num_assets))
+
+    result = sco.minimize(portfolio_volatility, num_assets*[1./num_assets,], args=args,
+                        method ='SLSQP', bounds = bounds, constraints=constraints)
+
+    return result
+
+def efficient_return(mean_returns, cov_matrix, target):
+    num_assets = len(mean_returns)
+    args = (mean_returns, cov_matrix)
+
+def efficient_frontier(mean_returns, cov_matrix, returns_range):
+    efficients = []
+    for ret in returns_range:
+        efficients.append(efficient_return(mean_returns, cov_matrix, ret))
+    return efficients
