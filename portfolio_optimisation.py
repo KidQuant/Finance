@@ -38,7 +38,7 @@ for c in returns.columns.values:
 plt.legend(loc='upper right', fontsize=12)
 plt.ylabel('daily returns')
 
-def portfolio_annualised_performance(weights, mean_returns, cov_matrix):
+def portfolio_annualized_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
     std = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights))) * np.sqrt(252)
     return std, returns
@@ -50,7 +50,7 @@ def random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate):
         weights = np.random.random(4)
         weights /= np.sum(weights)
         weights_record.append(weights)
-        portfolio_std_dev, portfolio_return = portfolio_annualised_performance(weights, mean_returns, cov_matrix)
+        portfolio_std_dev, portfolio_return = portfolio_annualized_performance(weights, mean_returns, cov_matrix)
         results[0,i] = portfolio_std_dev
         results[1,i] = portfolio_return
         results[2,i] = (portfolio_return - risk_free_rate) / portfolio_std_dev
@@ -101,3 +101,20 @@ def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, r
     plt.legend(labelspacing=0.8)
 
 display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
+
+#Efficient Frontier
+
+constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) -1})
+
+def neg_sharpe_ratio(weights, mean_returns, cov_matrix, risk_fre_rate):
+    p_var, p_ret = portfolio_annualized_performance(weights, mean_returns, cov_matrix)
+    return -(p_ret, -risk_free_rate) / p_var
+
+def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
+    num_assets = len(mean_returns)
+    args = (mean_returns, cov_matrix, risk_free_rate)
+    constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
+    bound = (0.0,1.0)
+    bounds = tuple(bound for assets in range(num_assets))
+    result = sco.minimize(neg_sharpe_ratio, num_assets*[1./num_assets,], args=args,
+                        method = 'SLSQP', bounds = bounds, constraints=constraints)
