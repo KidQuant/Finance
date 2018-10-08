@@ -106,18 +106,19 @@ display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_
 
 constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) -1})
 
-def neg_sharpe_ratio(weights, mean_returns, cov_matrix, risk_fre_rate):
+def neg_sharpe_ratio(weights, mean_returns, cov_matrix, risk_free_rate):
     p_var, p_ret = portfolio_annualized_performance(weights, mean_returns, cov_matrix)
-    return -(p_ret, -risk_free_rate) / p_var
+    return -(p_ret - risk_free_rate) / p_var
 
 def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
     num_assets = len(mean_returns)
     args = (mean_returns, cov_matrix, risk_free_rate)
     constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
     bound = (0.0,1.0)
-    bounds = tuple(bound for assets in range(num_assets))
+    bounds = tuple(bound for asset in range(num_assets))
     result = sco.minimize(neg_sharpe_ratio, num_assets*[1./num_assets,], args=args,
-                        method = 'SLSQP', bounds = bounds, constraints=constraints)
+                        method='SLSQP', bounds=bounds, constraints=constraints)
+    return result
 
 def portfolio_volatility(weights, mean_returns, cov_matrix):
     return portfolio_annualized_performance(weights, mean_returns, cov_matrix)[0]
@@ -125,12 +126,12 @@ def portfolio_volatility(weights, mean_returns, cov_matrix):
 def min_variance(mean_returns, cov_matrix):
     num_assets = len(mean_returns)
     args = (mean_returns, cov_matrix)
-    constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) -1})
-    bound = (0.0, 1.0)
+    constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
+    bound = (0.0,1.0)
     bounds = tuple(bound for asset in range(num_assets))
 
     result = sco.minimize(portfolio_volatility, num_assets*[1./num_assets,], args=args,
-                        method ='SLSQP', bounds = bounds, constraints=constraints)
+                        method='SLSQP', bounds=bounds, constraints=constraints)
 
     return result
 
@@ -138,8 +139,79 @@ def efficient_return(mean_returns, cov_matrix, target):
     num_assets = len(mean_returns)
     args = (mean_returns, cov_matrix)
 
+    def portfolio_return(weights):
+        return portfolio_annualized_performance(weights, mean_returns, cov_matrix)[1]
+
+    constraints = ({'type': 'eq', 'fun': lambda x: portfolio_return(x) - target},
+                   {'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
+    bounds = tuple((0,1) for asset in range(num_assets))
+    result = sco.minimize(portfolio_volatility, num_assets*[1./num_assets,], args=args, method='SLSQP', bounds=bounds, constraints=constraints)
+    return result
+
 def efficient_frontier(mean_returns, cov_matrix, returns_range):
     efficients = []
     for ret in returns_range:
         efficients.append(efficient_return(mean_returns, cov_matrix, ret))
     return efficients
+
+def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate):
+    results, _ = random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate)
+
+    max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
+    sdp, rp = portfolio_annualized_performance(max_sharpe['x'], mean_returns, cov_matrix)
+    max_sharpe_allocation = pd.DataFrame(max_sharpe.x, index=table.columns, columns=['allocation'])
+    max_sharpe_allocation.allocation = [round(i*200, 2) for i in max_sharpe_allocation.allocation]
+    max_sharpe_allocation = max_sharpe_allocation.T
+
+    min_vol = min_variance(mean_returns, cov_matrix)
+    sdp_min, rp_min = portfolio_annualized_performance(min_vol['x'], mean_returns, cov_matrix)
+    min_vol_allocation = pd.DataFrame(min_vol.x, index=table.columns, columns=['allocation'])
+    min_vol_allocation.allocation = [round(i*200,2) for i in min_vol_allocation.allocation]
+
+    print( '-'*80)
+    print( 'Maximum Sharpe Ratio Portfolio Allocation\n')
+    print( 'Annualized Return:', round(rp,2))
+    print( 'Annualized Volatility:', round(sdp,2))
+    print( '\n')
+    print( max_sharpe_allocation)
+    print( '-'*80)
+    print( 'Minimum Volatility Portfolio Allocation')
+    print( 'Annualized Return:', round(rp_min,2))
+    print( 'Annualized Volatility', round(sdp_min,2))
+    print( '\n')
+    print( min_vol_allocation)
+
+    plt.figure(figsize = (10,7))
+    plt.scatter(results[0,:], results[1,:], c=results[2,:], cmap='YlGnBu', marker='o', s=10, alpha = 0.3)
+    plt.colorbar()
+    plt.scatter(sdp,rp, marker='*', color='r',s=500, label='Maximum Sharpe Ratio')
+    plt.scatter(sdp_min, rp_min, marker='*', color ='g', s = 500, label = 'Minimum Volatility')
+
+    target = np.linspace(rp_min, 0.32, 50)
+    efficient_portfolios = efficient_frontier(mean_returns, cov_matrix, target)
+    plt.plot([p['fun'] for p in efficient_portfolios], target, linestyle='-.', color = 'black', label = 'Efficient Frontier')
+    plt.title('Calculated Portfolio Optimization based Efficient Frontier')
+    plt.xlabel('Annualized Volatility')
+    plt.ylabel('Annualized Returns')
+    plt.legend(labelspacing = 0.8)
+
+display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
+
+
+def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate):
+    max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
+    sdp, rp = portfolio_annualized_performance(max_sharpe['x'])
+    max_sharpe_allocation = pd.DataFrame(max_sharpe.x, index=table.columns = ['allocation'])
+    max_sharpe_allocation.allocation = [round(i*100,2) for i in max_sharpe_allocation.allocation]
+    max_sharpe_allocation = max_sharpe_allocation.T
+
+    min_vol = min_variance(mean_returns, cov_matrix)
+    sdp_min, rp_min = portfolio_annualized_performance(min_vol['x'], mean_returns, cov_matrix)
+    min_vol_allocation = pd.DataFrame(min_vol.x, index = table.columns, columns=['allocation'])
+    min_vol_allocation.allocation = [round(i*100,2) for i in min_vol_allocation.allocation]
+    min_vol_allocation = min_vol_allocation.T
+
+    an_vol = np.std(returns) * np.sqrt(252)
+    an_rt = mean(returns) * 252
+
+    
