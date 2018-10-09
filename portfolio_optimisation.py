@@ -5,7 +5,7 @@ import seaborn as sns
 import quandl
 import scipy.optimize as sco
 
-np.random.seed(123)
+np.random.seed(75)
 
 %matplotlib inline
 %config InlineBackend.figure_format = 'retina'
@@ -14,7 +14,7 @@ quandl.ApiConfig.api_key = 'asLyyb8z8JXQ35tC89RF'
 stocks = ['AAPL', 'AMZN', 'GOOGL', 'FB']
 data = quandl.get_table('WIKI/PRICES', ticker = stocks,
                                        qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
-                                       date = { 'gte': '2016-1-1', 'lte': '2018-09-31' }, paginate=True)
+                                       date = { 'gte': '2017-10-9', 'lte': '2018-10-9' }, paginate=True)
 
 data.head()
 data.info()
@@ -60,7 +60,7 @@ returns = table.pct_change()
 mean_returns = returns.mean()
 cov_matrix = returns.cov()
 num_portfolios = 25000
-risk_free_rate = 0.0278
+risk_free_rate = 0.032271
 
 def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate):
     results, weights = random_portfolios(num_portfolios,mean_returns, cov_matrix, risk_free_rate)
@@ -160,13 +160,13 @@ def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, 
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
     sdp, rp = portfolio_annualized_performance(max_sharpe['x'], mean_returns, cov_matrix)
     max_sharpe_allocation = pd.DataFrame(max_sharpe.x, index=table.columns, columns=['allocation'])
-    max_sharpe_allocation.allocation = [round(i*200, 2) for i in max_sharpe_allocation.allocation]
+    max_sharpe_allocation.allocation = [round(i*100, 2) for i in max_sharpe_allocation.allocation]
     max_sharpe_allocation = max_sharpe_allocation.T
 
     min_vol = min_variance(mean_returns, cov_matrix)
     sdp_min, rp_min = portfolio_annualized_performance(min_vol['x'], mean_returns, cov_matrix)
     min_vol_allocation = pd.DataFrame(min_vol.x, index=table.columns, columns=['allocation'])
-    min_vol_allocation.allocation = [round(i*200,2) for i in min_vol_allocation.allocation]
+    min_vol_allocation.allocation = [round(i*100,2) for i in min_vol_allocation.allocation]
 
     print( '-'*80)
     print( 'Maximum Sharpe Ratio Portfolio Allocation\n')
