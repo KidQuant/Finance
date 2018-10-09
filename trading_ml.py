@@ -12,7 +12,6 @@ import datetime as dt
 start = dt.datetime(2017,1,1)
 end = dt.datetime.now()
 
-
 avg_err ={}
 avg_train_err = {}
 df = web.DataReader('SPY', 'robinhood',start, end )
