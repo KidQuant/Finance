@@ -200,8 +200,8 @@ display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk
 
 def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate):
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
-    sdp, rp = portfolio_annualized_performance(max_sharpe['x'])
-    max_sharpe_allocation = pd.DataFrame(max_sharpe.x, index=table.columns = ['allocation'])
+    sdp, rp = portfolio_annualized_performance(max_sharpe['x'], mean_returns, cov_matrix)
+    max_sharpe_allocation = pd.DataFrame(max_sharpe.x, index=table.columns, columns = ['allocation'])
     max_sharpe_allocation.allocation = [round(i*100,2) for i in max_sharpe_allocation.allocation]
     max_sharpe_allocation = max_sharpe_allocation.T
 
@@ -212,6 +212,34 @@ def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate):
     min_vol_allocation = min_vol_allocation.T
 
     an_vol = np.std(returns) * np.sqrt(252)
-    an_rt = mean(returns) * 252
+    an_rt = mean_returns * 252
 
-    
+    print('-'*80)
+    print('Maximum Sharpe Ratio Portfolio Allocation\n')
+    print('Annualized Return', round(rp,2))
+    print('Annualized Volatility', round(sdp,2))
+    print('\n')
+    print(min_vol_allocation)
+    print('-'*80)
+    print('Individual Stock Returns and Volatility')
+    for i, txt in enumerate(table.columns):
+        print(txt, ':','annualized return', round(an_rt[i],2),', annualized volatility:', round(an_vol[i],2))
+    print('-'*80)
+
+    fig, ax = plt.subplots(figsize = (10,7))
+    ax.scatter(an_vol, an_rt, marker ='o',s=200)
+
+    for i, txt in enumerate(table.columns):
+        ax.annotate(txt, (an_vol[i], an_rt[i]), xytext=(10,0), textcoords = 'offset points')
+    ax.scatter(sdp,rp,marker='*', color='r',s=500, label='Maximum Sharpe ratio')
+    ax.scatter(sdp_min,rp_min,marker='*', color='g', s=500, label = 'Minimum volatility')
+
+    target = np.linspace(rp_min, 0.34, 50)
+    efficient_portfolios = efficient_frontier(mean_returns, cov_matrix, target)
+    ax.plot([p['fun'] for p in efficient_portfolios], target, linestyle = '-.', color = 'black', label = 'efficient frontier')
+    ax.set_title('Portfolio Optimization with Individual Stocks')
+    ax.set_xlabel('Annualized Volatility')
+    ax.set_ylabel('Annualized Returns')
+    ax.legend(labelspacing = 0.8)
+
+display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate)
