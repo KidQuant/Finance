@@ -160,13 +160,13 @@ def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, 
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
     sdp, rp = portfolio_annualized_performance(max_sharpe['x'], mean_returns, cov_matrix)
     max_sharpe_allocation = pd.DataFrame(max_sharpe.x, index=table.columns, columns=['allocation'])
-    max_sharpe_allocation.allocation = [round(i*200, 2) for i in max_sharpe_allocation.allocation]
+    max_sharpe_allocation.allocation = [round(i*100, 2) for i in max_sharpe_allocation.allocation]
     max_sharpe_allocation = max_sharpe_allocation.T
 
     min_vol = min_variance(mean_returns, cov_matrix)
     sdp_min, rp_min = portfolio_annualized_performance(min_vol['x'], mean_returns, cov_matrix)
     min_vol_allocation = pd.DataFrame(min_vol.x, index=table.columns, columns=['allocation'])
-    min_vol_allocation.allocation = [round(i*200,2) for i in min_vol_allocation.allocation]
+    min_vol_allocation.allocation = [round(i*100,2) for i in min_vol_allocation.allocation]
 
     print( '-'*80)
     print( 'Maximum Sharpe Ratio Portfolio Allocation\n')
