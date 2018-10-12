@@ -5,10 +5,14 @@ import seaborn as sns
 import quandl
 import scipy.optimize as sco
 
+#For making replicable trials
+
 np.random.seed(75)
 
 %matplotlib inline
 %config InlineBackend.figure_format = 'retina'
+
+#Extracting the stock market data from Quandl API
 
 quandl.ApiConfig.api_key = ['YOUR OWN QUANDL CODE']
 stocks = ['FB', 'AMZN', 'NFLX', 'GOOGL']
@@ -16,13 +20,19 @@ data = quandl.get_table('WIKI/PRICES', ticker = stocks,
                                        qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
                                        date = { 'gte': '2016-10-9', 'lte': '2018-10-9' }, paginate=True)
 
+#Shows the first 6 plots and the structure of your data
+
 data.head()
 data.info()
+
+#Cleaning the data
 
 df = data.set_index('date')
 table = df.pivot(columns = 'ticker')
 table.columns = [col[1] for col in table.columns]
 table.head()
+
+#Plotting the Time Series
 
 plt.figure(figsize=(14, 7))
 for c in table.columns.values:
@@ -30,6 +40,8 @@ for c in table.columns.values:
 plt.legend(loc='upper left', fontsize=12)
 plt.ylabel('price in $')
 plt.savefig('prices.jpeg')
+
+#Calculating and plotting the Annualized One-Day Returns
 
 returns = table.pct_change()
 
@@ -40,10 +52,14 @@ plt.legend(loc='upper right', fontsize=12)
 plt.ylabel('daily returns')
 plt.savefig('returns.jpeg')
 
+#Calculates the returns and volatility into an annaulized rate.
+
 def portfolio_annualized_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
     std = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights))) * np.sqrt(252)
     return std, returns
+
+#Generates portfolios with random weights assigned to each stock
 
 def random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate):
     results = np.zeros((3,num_portfolios))
@@ -58,11 +74,16 @@ def random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate):
         results[2,i] = (portfolio_return - risk_free_rate) / portfolio_std_dev
     return results, weights_record
 
+#The variables necessary to construct the efficient portfolio frontier
+
 returns = table.pct_change()
 mean_returns = returns.mean()
 cov_matrix = returns.cov()
 num_portfolios = 25000
 risk_free_rate = 0.026571
+
+#Using the previous results to locate the highest sharpe ratio and the minimum volatility.
+#The highest sharpe ratio will have Green while the minimum volatility will be red.
 
 def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate):
     results, weights = random_portfolios(num_portfolios,mean_returns, cov_matrix, risk_free_rate)
@@ -104,13 +125,13 @@ def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, r
 
 display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
 
-#Efficient Frontier
-
-constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) -1})
+#The Scipy Optimize function has no maximize function. Without a maximize function, we use a neg_sharpe_ratio to compute the negative Sharpe Ratio
 
 def neg_sharpe_ratio(weights, mean_returns, cov_matrix, risk_free_rate):
     p_var, p_ret = portfolio_annualized_performance(weights, mean_returns, cov_matrix)
     return -(p_ret - risk_free_rate) / p_var
+
+#max_sharpe_ratio calcualtes the maximum sharpe ratio while making sure all portfolio weights equal up to 1.
 
 def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
     num_assets = len(mean_returns)
@@ -122,8 +143,12 @@ def max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate):
                         method='SLSQP', bounds=bounds, constraints=constraints)
     return result
 
+#This function calculates the weights, returns and volatility of the random portfolios
+
 def portfolio_volatility(weights, mean_returns, cov_matrix):
     return portfolio_annualized_performance(weights, mean_returns, cov_matrix)[0]
+
+#This function calculates the minimum possible volatility for each portfolio
 
 def min_variance(mean_returns, cov_matrix):
     num_assets = len(mean_returns)
@@ -136,6 +161,8 @@ def min_variance(mean_returns, cov_matrix):
                         method='SLSQP', bounds=bounds, constraints=constraints)
 
     return result
+
+#Calculates the most efficient portfolio for a given target return
 
 def efficient_return(mean_returns, cov_matrix, target):
     num_assets = len(mean_returns)
@@ -150,11 +177,15 @@ def efficient_return(mean_returns, cov_matrix, target):
     result = sco.minimize(portfolio_volatility, num_assets*[1./num_assets,], args=args, method='SLSQP', bounds=bounds, constraints=constraints)
     return result
 
+#Takes the range of target returns and compute efficient portfolio for each return level
+
 def efficient_frontier(mean_returns, cov_matrix, returns_range):
     efficients = []
     for ret in returns_range:
         efficients.append(efficient_return(mean_returns, cov_matrix, ret))
     return efficients
+
+#A new portfolio plot with a maximum sharpe ratio and a minimized volatility
 
 def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate):
     results, _ = random_portfolios(num_portfolios, mean_returns, cov_matrix, risk_free_rate)
@@ -199,6 +230,7 @@ def display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, 
 
 display_calculated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate)
 
+#Plots individual stocks instead of the sharpe ratio/volatility
 
 def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate):
     max_sharpe = max_sharpe_ratio(mean_returns, cov_matrix, risk_free_rate)
