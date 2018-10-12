@@ -10,7 +10,7 @@ np.random.seed(75)
 %matplotlib inline
 %config InlineBackend.figure_format = 'retina'
 
-quandl.ApiConfig.api_key = 'asLyyb8z8JXQ35tC89RF'
+quandl.ApiConfig.api_key = ['YOUR OWN QUANDL CODE']
 stocks = ['FB', 'AMZN', 'NFLX', 'GOOGL']
 data = quandl.get_table('WIKI/PRICES', ticker = stocks,
                                        qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
