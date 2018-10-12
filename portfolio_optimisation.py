@@ -11,10 +11,10 @@ np.random.seed(75)
 %config InlineBackend.figure_format = 'retina'
 
 quandl.ApiConfig.api_key = 'asLyyb8z8JXQ35tC89RF'
-stocks = ['AAPL', 'AMZN', 'GOOGL', 'FB']
+stocks = ['FB', 'AMZN', 'NFLX', 'GOOGL']
 data = quandl.get_table('WIKI/PRICES', ticker = stocks,
                                        qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
-                                       date = { 'gte': '2017-10-9', 'lte': '2018-10-9' }, paginate=True)
+                                       date = { 'gte': '2016-10-9', 'lte': '2018-10-9' }, paginate=True)
 
 data.head()
 data.info()
@@ -29,6 +29,7 @@ for c in table.columns.values:
     plt.plot(table.index, table[c], lw=3, alpha=0.8,label=c)
 plt.legend(loc='upper left', fontsize=12)
 plt.ylabel('price in $')
+plt.savefig('prices.jpeg')
 
 returns = table.pct_change()
 
@@ -37,6 +38,7 @@ for c in returns.columns.values:
     plt.plot(returns.index, returns[c], lw=3, alpha=0.8,label=c)
 plt.legend(loc='upper right', fontsize=12)
 plt.ylabel('daily returns')
+plt.savefig('returns.jpeg')
 
 def portfolio_annualized_performance(weights, mean_returns, cov_matrix):
     returns = np.sum(mean_returns*weights ) *252
@@ -60,7 +62,7 @@ returns = table.pct_change()
 mean_returns = returns.mean()
 cov_matrix = returns.cov()
 num_portfolios = 25000
-risk_free_rate = 0.032271
+risk_free_rate = 0.026571
 
 def display_simulated_ef_with_random(mean_returns, cov_matrix, num_portfolios, risk_free_rate):
     results, weights = random_portfolios(num_portfolios,mean_returns, cov_matrix, risk_free_rate)
