@@ -14,7 +14,7 @@ np.random.seed(75)
 
 #Extracting the stock market data from Quandl API
 
-quandl.ApiConfig.api_key = ['YOUR OWN QUANDL CODE']
+quandl.ApiConfig.api_key = 'asLyyb8z8JXQ35tC89RF'
 stocks = ['FB', 'AMZN', 'NFLX', 'GOOGL']
 data = quandl.get_table('WIKI/PRICES', ticker = stocks,
                                        qopts = { 'columns': ['date', 'ticker', 'adj_close'] },
@@ -260,20 +260,18 @@ def display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate):
         print(txt, ':','annualized return', round(an_rt[i],2),', annualized volatility:', round(an_vol[i],2))
     print('-'*80)
 
-    fig, ax = plt.subplots(figsize = (10,7))
-    ax.scatter(an_vol, an_rt, marker ='o',s=200)
+    plt.figure(figsize=(10,7))
+    plt.scatter(result[0,:], results[1,:],c=results[2,:], cmap='YlGnBu', marker='o',s=10, alpha=0.3)
+    plt.colorbar()
+    plt.scatter(sdp,rp,marker='*', color='r',s=500,label='Maximum Sharpe Ratio')
+    plt.scatter(sdp_min, rp_min, marker='*', color = 'g', s=500, label='Minimum Volatility')
 
-    for i, txt in enumerate(table.columns):
-        ax.annotate(txt, (an_vol[i], an_rt[i]), xytext=(10,0), textcoords = 'offset points')
-    ax.scatter(sdp,rp,marker='*', color='r',s=500, label='Maximum Sharpe ratio')
-    ax.scatter(sdp_min,rp_min,marker='*', color='g', s=500, label = 'Minimum volatility')
-
-    target = np.linspace(rp_min, 0.34, 50)
+    target = np.linspace(rp_min, 0.32, 50)
     efficient_portfolios = efficient_frontier(mean_returns, cov_matrix, target)
-    ax.plot([p['fun'] for p in efficient_portfolios], target, linestyle = '-.', color = 'black', label = 'efficient frontier')
-    ax.set_title('Portfolio Optimization with Individual Stocks')
-    ax.set_xlabel('Annualized Volatility')
-    ax.set_ylabel('Annualized Returns')
-    ax.legend(labelspacing = 0.8)
+    plt.plot([p['fun'] for p in efficient_portfolios], target, linestyle='-.', color='black', label='Efficent Frontier')
+    plt.title('Calculated Portfolio Optimization based on Efficient Frontier')
+    plt.xlabel('Annualized Volatility')
+    plt.ylabel('Annualized Returns')
+    plt.legend(labelspacing = 0.8)
 
 display_ef_with_selected(mean_returns, cov_matrix, risk_free_rate)
