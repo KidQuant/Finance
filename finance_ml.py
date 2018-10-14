@@ -6,13 +6,17 @@ import requests
 import pickle
 import os
 pd.core.common.is_list_like = pd.api.types.is_list_like
-import pandas_datareader.data as web
+from  pandas_datareader import data as web
 from collections import Counter
 import numpy as np
 from sklearn import svm
 from sklearn import cross_validation
 from sklearn import neighbors
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier
+import quandl
+
+quandl.ApiConfig.api_key = 'asLyyb8z8JXQ35tC89RF'
+
 
 #Getting a list from S&P 500 companies from Wikipedia.
 
