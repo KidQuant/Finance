@@ -98,7 +98,7 @@ class FillEvent(Event):
     def __init__(self, timeindex, symbol, exchange, quantity,
                  direction, fill_cost, commission=None):
         """
-        Initalizes the FillEvent object. Sets the symbol, exchange, 
+        Initalizes the FillEvent object. Sets the symbol, exchange,
         quantity, direction, cost of fill and an optional commission.
 
         If commssion is not provided, the Fill object will calculate
@@ -142,6 +142,3 @@ class FillEvent(Event):
         else: #Greater than 500
             full_cost = max(1.3, 0.008 * self.quantity)
         return full_cost
-        
-
-                 

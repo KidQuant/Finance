@@ -15,9 +15,6 @@ from sklearn import neighbors
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 import quandl
 
-quandl.ApiConfig.api_key = 'asLyyb8z8JXQ35tC89RF'
-
-
 #Getting a list from S&P 500 companies from Wikipedia.
 
 def save_sp500_tickers():
