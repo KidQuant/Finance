@@ -125,4 +125,9 @@ class Backtest(object):
         print('Orders: %s' %self.orders)
         print('Fills: %s' % self.fills)
 
-    
+    def simulate_trading(self):
+        """
+        Simulates the backtest and outputs portfolio performance.
+        """
+        self._run_backtest()
+        self._output_performance(s)
