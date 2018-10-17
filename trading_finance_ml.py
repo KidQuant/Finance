@@ -21,14 +21,10 @@ print(df.head())
 
 df.to_csv('TSLA.csv')
 df = pd.read_csv('TSLA.csv', parse_dates = True, index_col = 0)
-
 df.plot()
-plt.show()
-plt.savefig('TSLA.jpeg', bbox_inches ='tight')
 
 df['close_price'].plot()
 plt.show()
-plt.savefig('TSLA1.jpeg', bbox_inches = 'tight')
 
 df['20ma'] = df['close_price'].rolling(window=20).mean()
 print(df.head())
@@ -41,8 +37,6 @@ ax2 = plt.subplot2grid((6,1), (5,0), rowspan=5, colspan=1, sharex=ax1)
 ax1.plot(df.index, df['close_price'])
 ax1.plot(df.index, df['20ma'])
 ax2.bar(df.index, df['volume'])
-plt.savefig('TSLAmoving', bbox_inches='tight')
-plt.show()
 
 import bs4 as bs
 import pickle
