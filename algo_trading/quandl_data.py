@@ -34,4 +34,54 @@ def download_contract_from_quandl(contract, dl_dir):
     api_call += 'OFDP/FUTURE_%s.csv' % contract
     #If you wish to add an auth token for more downloads, simply
     #comment the following line and replace MY_AUTH_TOKEN with
-    
+    #your auth token in the line below
+    params = '?sort_order = asc'
+    #params = '?auth_token= = MY_AUTH_TOKEN&sort_order=asc'
+    full_url = "%s%s" % (api_call, params)
+
+    #Download the data from Quandl
+    data = requests.get(full_url).text
+
+    #Store the data to disk
+    fc = open('%s/%s.csv' % (dl_dir, contract), 'w')
+    fc.write(data)
+    fc.close()
+
+def download_historical_contracts(
+        symbols, dl_dir, start_year = 2010, end_year = 2014
+    ):
+    """
+    Downloads all futures contracts for a specified symbol
+    between a start_year and an end_year.
+    """
+    contracts = construct_futures_symbols(
+        symbols, start_year, end_year
+    )
+
+    for c in contracts:
+        print('Downloading contracts: %s' % c)
+        download_contract_from_quandl(c, dl_dir)
+
+if __name__ == '__main__':
+    symbol = 'ES'
+
+    #Make sure you've created this
+    #relative directory beforehand
+    dl_dir = 'quandl/futures/ES'
+
+    #create the start and end years
+    start_year = 2013
+    end_end = 2017
+
+    #Download the contracts into the directory
+    download_historical_contracts(
+        symbol, dl_dir, start_year, end_year
+    )
+
+    #Open up a single contract via read_csv
+    # and plot the settle price
+    es = pd.io.parsers.read_csv(
+        "%s/ESH2014" % dl_dir, index_col ='Date'
+    )
+    es['Settle'].plot()
+    plt.show()
