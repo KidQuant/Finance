@@ -44,4 +44,29 @@ class SimulatedExecutionHandler(ExecutionHandler):
     without latency, slippages or fill-ratio issues.
 
     This allows a straightforward 'first go' test of any strategy,
-    
+    before implementation with more sophisticated execution handler.
+    """
+
+    def __init__(self, events):
+        """
+        Initalizes the handler, setting the event queues up internally.
+
+        Paramaters:
+        events - The Quenue of Event object.
+        """
+        self.events = events
+
+    def execute_order(self, event):
+        """
+        Simply converts Order objects into Fill objects naively,
+        i.e. without any latency, slippage or fill ratio problems.
+
+        Paramaters:
+        event - Contains an event object with order information.
+        """
+        if event.type == 'ORDER':
+            fill_event = FillEvent(
+                datetime.datetime.utcnow(), event.symbol,
+                'ARCA', event.quantity, event.direction, NONE
+            )
+            self.events.put(fill_event)    
