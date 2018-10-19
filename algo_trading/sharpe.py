@@ -47,5 +47,35 @@ def equity_sharpe(ticker):
 
 equity_sharpe('GOOGL')
 
+def market_neutral_sharpe(ticker, benchmark):
+    """
+    Calculates the annualized Sharpe ratio of a market
+    neutral long/short strategy involving the long of 'ticker'
+    with a corresponding short of the 'benchmark'.
+    """
+
+    start = datetime.datetime(2013,1,1)
+    end = datetime.datetime.now()
+
+    # Get historic data for both a symbol/ticker and a benchmark ticker
+    # The dates have been hardcoded, but you can modify them as you see fit!
+    tick = web.get_data_yahoo(ticker, start, end)
+    bench = web.get_data_yahoo(benchmark, start, end)
+
+    # Calculate the percentage returns on each of the time series
+    tick['daily_ret'] = tick['Adj Close'].pct_change()
+    bench['daily_ret'] = bench['Adj Close'].pct_change()
+
+    # Create a new DataFrame to store the strategy information
+    # The net returns are (long- short)/2, since there is twice
+    # the trading capital for this strategy
+    strat = pd.DataFrame(index = tick.index)
+    strat['net_ret'] = (tick['daily_ret'] - bench['daily_ret'])/2.0
+
+    #Return the annualized Sharpe ratio for this strategy
+    return annualized_sharpe(strat['net_ret'])
+
+market_neutral_sharpe('GOOGL', 'SPY')
+
 
 web.get_data_yahoo('AAPL', '2015-01-01', '2018-07-01')
