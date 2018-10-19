@@ -69,4 +69,4 @@ class SimulatedExecutionHandler(ExecutionHandler):
                 datetime.datetime.utcnow(), event.symbol,
                 'ARCA', event.quantity, event.direction, NONE
             )
-            self.events.put(fill_event)    
+            self.events.put(fill_event)
