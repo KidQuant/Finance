@@ -4,8 +4,11 @@ import matplotlib
 from matplotlib import style
 import matplotlib.pyplot as plt
 import pandas as pd
-from pandas_datareader import data as web
-import fix_yahoo_finance
+from pandas_datareader import data as pdr
+import fix_yahoo_finance as yf
+import numpy as np
+
+yf.pdr_override()
 
 matplotlib.use('TkAgg')
 import numpy as np
@@ -14,7 +17,7 @@ style.use('ggplot')
 start = dt.datetime(2013,1,1)
 end = dt.datetime.now()
 
-df = web.get_data_yahoo('TSLA', start, end)
+df = pdr.get_data_yahoo('TSLA', start, end)
 
 print(df.head())
 
@@ -74,14 +77,14 @@ def get_data_from_yahoo(reload_sp500=False):
     for ticker in tickers:
         print(ticker)
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
-            df = web.get_data_yahoo(ticker, start, end)
+            df = pdr.get_data_yahoo(ticker, start, end)
             df.reset_index(inplace=True)
             df.set_index('Date', inplace=True)
             df.to_csv('stock_dfs/{}.csv'.format(ticker))
         else:
             print('Already have {}'.format(ticker))
 
-get_data_from_yahoo()
+get_data_from_yahoo(reload_sp500=True)
 
 def compile_data():
     with open('sp500tickers.pickle', 'rb') as f:
@@ -286,6 +289,7 @@ ax1.plot(signals.loc[signals.positions == 1.0].index, signals.short_mavg[signals
 ax1.plot(signals.loc[signals.positions == -1.0].index, signals.short_mavg[signals.positions == -1.0],'v', markersize=10, color='k')
 plt.show()
 
+<<<<<<< HEAD
 
 #Backtesting
 initial_capital = float(100000.0)
@@ -312,3 +316,34 @@ ax1.plot(portfolio.loc[signals.positions == 1.0].index,
 ax1.plot(portfolio.loc[signals.positions == -1.0].index,
         portfolio.total[signals.positions == -1.0],
         'v', markersize=10, color='k')
+=======
+import math
+from sklearn import preprocessing, cross_validation, svm
+from sklearn.linear_model import LinearRegression
+
+df = pd.read_csv('stock_dfs/AAPL.csv')
+
+df.head()
+
+aapl = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
+aapl['HL_PCT'] = (df['High'] - df['Low']) / df['Close'] * 100.0
+aapl['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] *100
+
+aapl = aapl[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
+forecast_col = 'Adj Close'
+df.fillna(value=-99999, inplace=True)
+forecast_out = int(math.ceil(0.01 * len(df)))
+aapl['label'] = aapl[forecast_col].shift(-forecast_out)
+
+X = np.array(aapl.drop(['label'], 1))
+X = preprocessing.scale(X)
+X = X[:-forecast_out]
+aapl.dropna(inplace=True)
+y = np.array(aapl['label'])
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(X,y,test_size=0.2)
+
+clf =LinearRegression(n_jobs=-1)
+clf.fit(X_train, y_train)
+confidence = clf.score(X_test, y_test)
+print(confidence)
+>>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351

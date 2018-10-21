@@ -54,3 +54,8 @@ if __name __ == '__main__':
         # comma delimiter from each record
         data = ''.join(data.split('\r'))
         data = data.replace(',\n', '\n')[:-1]
+
+        # Write the data stream to disk
+        f = open('%s.csv' % sym, 'w')
+        f.write(data)
+        f.close
