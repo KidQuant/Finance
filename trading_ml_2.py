@@ -286,12 +286,20 @@ aapl['label'] = aapl[forecast_col].shift(-forecast_out)
 
 X = np.array(aapl.drop(['label'], 1))
 X = preprocessing.scale(X)
+X_lately = X[-forecast_out:]
 X = X[:-forecast_out]
-aapl.dropna(inplace=True)
-y = np.array(aapl['label'])
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(X,y,test_size=0.2)
 
-clf =LinearRegression(n_jobs=-1)
+aapl.dropna(inplace=True)
+
+y = np.array(aapl['label'])
+
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(X,y,test_size=0.20)
+clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
 print(confidence)
+
+forecast_set = clf.predict(X_lately)
+
+print(forecast_set, confidence, forecast_out)
+·
