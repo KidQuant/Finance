@@ -1,10 +1,10 @@
-import datetime as dt
+import datetime
 import matplotlib.pyplot as plt
 import matplotlib
+from pandas_datareader import data as pdr
 from matplotlib import style
 import matplotlib.pyplot as plt
 import pandas as pd
-from pandas_datareader import data as pdr
 import fix_yahoo_finance as yf
 import numpy as np
 
@@ -290,22 +290,25 @@ ax1.plot(signals.loc[signals.positions == -1.0].index, signals.short_mavg[signal
 plt.show()
 
 import math
-from sklearn import preprocessing, cross_validation, svm
+from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
+from sklearn import cross_val_score
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_validation
 
-df = pd.read_csv('stock_dfs/AAPL.csv')
+df = pd.read_csv('stock_dfs/AAPL.csv', index_col = 'Date',parse_dates = True)
 
 df.head()
 
-df = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
+df = df[['Open',  'High',  'Low',  'Adj Close', 'Volume']]
 df['HL_PCT'] = (df['High'] - df['Low']) / df['Adj Close'] * 100.0
-df['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] *100
+df['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] * 100.0
 
 df = df[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
 forecast_col = 'Adj Close'
 df.fillna(value=-99999, inplace=True)
 forecast_out = int(math.ceil(0.01 * len(df)))
-df['label'] = aapl[forecast_col].shift(-forecast_out)
+df['label'] = df[forecast_col].shift(-forecast_out)
 
 X = np.array(df.drop(['label'], 1))
 X = preprocessing.scale(X)
@@ -314,25 +317,29 @@ X = X[:-forecast_out]
 
 df.dropna(inplace=True)
 
-y = np.array(aapl['label'])
+y = np.array(df['label'])
 
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(X,y,test_size=0.20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
-print(confidence)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 
 forecast_set = clf.predict(X_lately)
+df['Forecast'] = np.nan
 
-print(forecast_set, confidence, forecast_out)
-
-aapl['Forecast'] = np.nan
 last_date = df.iloc[-1].name
 last_unix = last_date.timestamp()
-=======
->>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351
->>>>>>> 8a1b36bf431a98844b179e177d009d6c2b9d1bd3
->>>>>>> c36be679b208973c6957522e9c4092a16ba2b2e8
+one_day = 86400
+next_unix = last_unix + one_day
+
+for i in forecast_set:
+    next_date = datetime.datetime.fromtimestamp(next_unix)
+    next_unix += 86400
+    df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
+
+df['Adj Close'].plot()
+df['Forecast'].plot()
+plt.legend(loc=4)
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.show()
