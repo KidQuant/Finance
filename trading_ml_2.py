@@ -297,24 +297,42 @@ df = pd.read_csv('stock_dfs/AAPL.csv')
 
 df.head()
 
-aapl = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
-aapl['HL_PCT'] = (df['High'] - df['Low']) / df['Close'] * 100.0
-aapl['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] *100
+df = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
+df['HL_PCT'] = (df['High'] - df['Low']) / df['Adj Close'] * 100.0
+df['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] *100
 
-aapl = aapl[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
+df = df[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
 forecast_col = 'Adj Close'
 df.fillna(value=-99999, inplace=True)
 forecast_out = int(math.ceil(0.01 * len(df)))
-aapl['label'] = aapl[forecast_col].shift(-forecast_out)
+df['label'] = aapl[forecast_col].shift(-forecast_out)
 
-X = np.array(aapl.drop(['label'], 1))
+X = np.array(df.drop(['label'], 1))
 X = preprocessing.scale(X)
+X_lately = X[-forecast_out:]
 X = X[:-forecast_out]
-aapl.dropna(inplace=True)
-y = np.array(aapl['label'])
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(X,y,test_size=0.2)
 
-clf =LinearRegression(n_jobs=-1)
+df.dropna(inplace=True)
+
+y = np.array(aapl['label'])
+
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(X,y,test_size=0.20)
+clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
 print(confidence)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+forecast_set = clf.predict(X_lately)
+
+print(forecast_set, confidence, forecast_out)
+
+aapl['Forecast'] = np.nan
+last_date = df.iloc[-1].name
+last_unix = last_date.timestamp()
+=======
+>>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351
+>>>>>>> 8a1b36bf431a98844b179e177d009d6c2b9d1bd3
+>>>>>>> c36be679b208973c6957522e9c4092a16ba2b2e8
