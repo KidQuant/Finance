@@ -289,34 +289,6 @@ ax1.plot(signals.loc[signals.positions == 1.0].index, signals.short_mavg[signals
 ax1.plot(signals.loc[signals.positions == -1.0].index, signals.short_mavg[signals.positions == -1.0],'v', markersize=10, color='k')
 plt.show()
 
-<<<<<<< HEAD
-
-#Backtesting
-initial_capital = float(100000.0)
-positions = pd.DataFrame(index = signals.index).fillna(0.0)
-positions['TWTR'] = 100 * signals['signal']
-portfolio = positions.multiply(twtr['Adj Close'], axis=0)
-pos_diff = positions.diff()
-portfolio['holdings'] = (positions.multiply(twtr['Adj Close'],
-        axis=0)).sum(axis=1)
-portfolio['cash'] = initial_capital - (pos_diff.multiply(twtr['Adj Close'],
-        axis=0)).sum(axis=1).cumsum()
-
-portfolio['total'] = portfolio['cash'] + portfolio['holdings']
-portfolio['returns'] = portfolio['total'].pct_change()
-
-print(portfolio.head())
-
-fig = plt.figure()
-ax1 = fig.add_subplot(111, ylabel='Portfolio value in $')
-portfolio['total'].plot(ax=ax1, lw=2.0)
-ax1.plot(portfolio.loc[signals.positions == 1.0].index,
-        portfolio.total[signals.positions == 1.0],
-        '^', markersize=10, color='m')
-ax1.plot(portfolio.loc[signals.positions == -1.0].index,
-        portfolio.total[signals.positions == -1.0],
-        'v', markersize=10, color='k')
-=======
 import math
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
@@ -346,4 +318,3 @@ clf =LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
 print(confidence)
->>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351
