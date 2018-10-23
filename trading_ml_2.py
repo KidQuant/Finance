@@ -2,6 +2,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib import style
+import matplotlib.pyplot as plt
 import pandas as pd
 from pandas_datareader import data as pdr
 import fix_yahoo_finance as yf
@@ -231,8 +232,6 @@ daily_close_px = all_data[['Adj Close']].reset_index().pivot('Date', 'Ticker', '
 daily_pct_change = daily_close_px.pct_change()
 
 daily_pct_change.hist(bins=50, sharex= True, figsize=(12, 8))
-
-
 pd.scatter_matrix(daily_pct_change, diagonal = 'kde', alpha=0.1, figsize=(12,12))
 plt.show()
 
@@ -258,14 +257,66 @@ plt.plot(return_data['AAPL'], return_data['MSFT'], 'r.')
 ax = plt.axis()
 x = np.linspace(ax[0], ax[1] + 0.01)
 plt.plot(x, model.params[0] * x, 'b')
-
 plt.grid(True)
 plt.axis('tight')
 plt.xlabel('Apple Returns')
 plt.ylabel('Microsoft Returns')
-
 plt.show()
 
+twtr = pd.read_csv('stock_dfs/TWTR.csv')
+twtr
+
+short_window = 10
+long_window = 70
+
+signals = pd.DataFrame(index=twtr.index)
+signals['signal'] = 0.0
+signals['short_mavg'] = twtr['Adj Close'].rolling(window=short_window, min_periods=1, center=False).mean()
+signals['long_mavg'] = twtr['Adj Close'].rolling(window=long_window, min_periods=1, center=False).mean()
+signals['signal'][short_window:] = np.where(signals['short_mavg'][short_window:]
+                                            > signals['long_mavg'][short_window:], 1.0, 0.0)
+signals['positions'] = signals['signal'].diff()
+
+print(signals)
+
+signals
+
+fig = plt.figure()
+ax1 = fig.add_subplot(111,  ylabel='Price in $')
+twtr['Adj Close'].plot(ax=ax1, color='r', lw=2.)
+signals[['short_mavg', 'long_mavg']].plot(ax=ax1, lw=2.)
+ax1.plot(signals.loc[signals.positions == 1.0].index, signals.short_mavg[signals.positions == 1.0], '^', markersize=10, color='m')
+ax1.plot(signals.loc[signals.positions == -1.0].index, signals.short_mavg[signals.positions == -1.0],'v', markersize=10, color='k')
+plt.show()
+
+<<<<<<< HEAD
+
+#Backtesting
+initial_capital = float(100000.0)
+positions = pd.DataFrame(index = signals.index).fillna(0.0)
+positions['TWTR'] = 100 * signals['signal']
+portfolio = positions.multiply(twtr['Adj Close'], axis=0)
+pos_diff = positions.diff()
+portfolio['holdings'] = (positions.multiply(twtr['Adj Close'],
+        axis=0)).sum(axis=1)
+portfolio['cash'] = initial_capital - (pos_diff.multiply(twtr['Adj Close'],
+        axis=0)).sum(axis=1).cumsum()
+
+portfolio['total'] = portfolio['cash'] + portfolio['holdings']
+portfolio['returns'] = portfolio['total'].pct_change()
+
+print(portfolio.head())
+
+fig = plt.figure()
+ax1 = fig.add_subplot(111, ylabel='Portfolio value in $')
+portfolio['total'].plot(ax=ax1, lw=2.0)
+ax1.plot(portfolio.loc[signals.positions == 1.0].index,
+        portfolio.total[signals.positions == 1.0],
+        '^', markersize=10, color='m')
+ax1.plot(portfolio.loc[signals.positions == -1.0].index,
+        portfolio.total[signals.positions == -1.0],
+        'v', markersize=10, color='k')
+=======
 import math
 from sklearn import preprocessing, cross_validation, svm
 from sklearn.linear_model import LinearRegression
@@ -298,6 +349,7 @@ clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
 print(confidence)
+<<<<<<< HEAD
 
 forecast_set = clf.predict(X_lately)
 
@@ -306,3 +358,6 @@ print(forecast_set, confidence, forecast_out)
 aapl['Forecast'] = np.nan
 last_date = df.iloc[-1].name
 last_unix = last_date.timestamp()
+=======
+>>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351
+>>>>>>> 8a1b36bf431a98844b179e177d009d6c2b9d1bd3

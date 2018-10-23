@@ -1,8 +1,15 @@
+<<<<<<< HEAD
+
+#mac.py
+
+from __future__ import print_function
+=======
  #mac.py
 
  from __future__ import print_function
 
  import datetime
+>>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351
 
 import numpy as np
 import pandas as pd
@@ -14,6 +21,8 @@ from backtest import Backtest
 from data import HistoricCSVDataHandler
 from execution import SimulatedExecutionHandler
 from portfolio import Portfolio
+<<<<<<< HEAD
+=======
 
 class MovingAverageCrossStrategy(Strategy):
     """
@@ -102,3 +111,4 @@ if __name__ == '__main__':
         Portfolio, MovingAverageCrossStrategy
     )
     backtest.simulate_trading()
+>>>>>>> 2b2d38b39698744791f839da66d069f1a6d83351
