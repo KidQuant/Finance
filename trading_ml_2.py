@@ -274,22 +274,22 @@ df = pd.read_csv('stock_dfs/AAPL.csv')
 
 df.head()
 
-aapl = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
-aapl['HL_PCT'] = (df['High'] - df['Low']) / df['Close'] * 100.0
-aapl['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] *100
+df = df[['Open', 'High', 'Low', 'Adj Close', 'Volume']]
+df['HL_PCT'] = (df['High'] - df['Low']) / df['Adj Close'] * 100.0
+df['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] *100
 
-aapl = aapl[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
+df = df[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
 forecast_col = 'Adj Close'
 df.fillna(value=-99999, inplace=True)
 forecast_out = int(math.ceil(0.01 * len(df)))
-aapl['label'] = aapl[forecast_col].shift(-forecast_out)
+df['label'] = aapl[forecast_col].shift(-forecast_out)
 
-X = np.array(aapl.drop(['label'], 1))
+X = np.array(df.drop(['label'], 1))
 X = preprocessing.scale(X)
 X_lately = X[-forecast_out:]
 X = X[:-forecast_out]
 
-aapl.dropna(inplace=True)
+df.dropna(inplace=True)
 
 y = np.array(aapl['label'])
 
@@ -302,4 +302,7 @@ print(confidence)
 forecast_set = clf.predict(X_lately)
 
 print(forecast_set, confidence, forecast_out)
-·
+
+aapl['Forecast'] = np.nan
+last_date = df.iloc[-1].name
+last_unix = last_date.timestamp()
