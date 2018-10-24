@@ -295,18 +295,18 @@ import pandas as pd
 from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+import datetime
 
 
-df = pd.read_csv('stock_dfs/FB.csv', index_col = 'Date',parse_dates = True)
+df = pd.read_csv('stock_dfs/AAPL.csv', index_col = 'Date',parse_dates = True)
 
 df.head()
 
 df = df[['Open',  'High',  'Low',  'Adj Close', 'Volume']]
 df['HL_PCT'] = (df['High'] - df['Low']) / df['Adj Close'] * 100.0
 df['PCT_change'] = (df['Adj Close'] - df['Open']) / df['Open'] * 100.0
-df = df[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
-print(df.head())
 
+df = df[['Adj Close', 'HL_PCT', 'PCT_change', 'Volume']]
 forecast_col = 'Adj Close'
 df.fillna(value=-99999, inplace=True)
 forecast_out = int(math.ceil(0.01 * len(df)))
@@ -321,21 +321,12 @@ df.dropna(inplace=True)
 
 y = np.array(df['label'])
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
-print(confidence)
-
-for k in ['linear','poly','rbf','sigmoid']:
-    clf = svm.SVR(kernel=k)
-    clf.fit(X_train, y_train)
-    confidence = clf.score(X_test, y_test)
-    print(k,confidence)
 
 forecast_set = clf.predict(X_lately)
-print(forecast_set, confidence, forecast_out)
-
 df['Forecast'] = np.nan
 
 last_date = df.iloc[-1].name
@@ -348,9 +339,10 @@ for i in forecast_set:
     next_unix += 86400
     df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
 
+plt.figure(figsize=(16,9))
 df['Adj Close'].plot()
 df['Forecast'].plot()
 plt.legend(loc=4)
 plt.xlabel('Date')
 plt.ylabel('Price')
-plt.show()
+plt.savefig('forecast.png', bbox_inches='tight')
