@@ -111,3 +111,13 @@ if __name__ == '__main__':
               )]
 
 for m in models:
+
+    #Train each of the models on the training set
+    m[1].fit(X_train, y_train)
+
+    # Make an array of predictions on the test set
+    pred = m[1].predict(X_test)
+
+    #Output the hit-rate and the confusion matrix for each model
+    print('%s:\n%0.3f' % (m[0], m[1].score(X_test, y_test)))
+    print('%s:\n' % confusion_matrix(pred, y_test))
