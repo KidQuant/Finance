@@ -113,4 +113,73 @@ class HistoricCSVDataHandler(DataHandler):
         comb_index = None
         for s in self.symbol_list:
             #Load the CSV file with no header information, indexed on date
-            self.symbol_data[s] = pd.io.parsers.read_csv()
+            self.symbol_data[s] = pd.io.parsers.read_csv(
+                os.path.join(self.csv_dir, '%s.csv' % s),
+                header = 0, index_col = 0, parse_dates_True,
+                names  = [
+                    'datetime', 'open', 'high',
+                    'low', 'close', 'volume', 'adj_close'
+                ]
+            ).sort()
+
+        #Reindex the dataframes
+        for i in self.symbol_list:
+            self.symbol_data[s] = self.symbol_data[s].\
+                reindex(index=comb_index, method = 'pad').iterrows()
+
+    def get_new_bar(self, symbol):
+        """
+        Returns the last bar from the latest_sybol list.
+        """
+        for b in self.symbol_data[symbol]:
+            yield b
+
+    def get_latest_bar(self, symbol):
+        """
+        Returns the last bar from the latest_symbol list.
+        """
+        try:
+            bars_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print("That symbol is not available in the historicall data set.")
+            raise
+        else:
+            return bars_list[-1]
+
+    def get_latest_bars(self, symbol, N=1):
+        """
+        Returns the last N bars from the latest_symbol list,
+        or N-k if less available.
+        """
+        try:
+            bars_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print("that symbol is not available in the historical data set.")
+            raise
+        else:
+            return bars_list[-N:]
+
+    def get_latest_bar_datetime(self, symbol):
+        """
+        Returns a Python datetime object for the last bar.
+        """
+        try:
+            bars_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print('That symbol is not available in the historical data set.')
+            raise
+        else:
+            return bars_list[-1][0]
+
+    def get_latest_bar_value(self, symbol, val_type):
+        """
+        Returns one of the Open, High, Low, Close, Volume or OI
+        values from the pandas Bar series object.
+        """
+        try:
+            bar_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print('That symbol is not available in the historical data set.')
+            raise
+        else:
+            return getattr(bars_list[-1][1], val_type)
