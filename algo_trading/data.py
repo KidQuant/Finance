@@ -115,7 +115,7 @@ class HistoricCSVDataHandler(DataHandler):
             #Load the CSV file with no header information, indexed on date
             self.symbol_data[s] = pd.io.parsers.read_csv(
                 os.path.join(self.csv_dir, '%s.csv' % s),
-                header = 0, index_col = 0, parse_dates_True,
+                header = 0, index_col = 0, parse_dates =True,
                 names  = [
                     'datetime', 'open', 'high',
                     'low', 'close', 'volume', 'adj_close'
@@ -183,3 +183,15 @@ class HistoricCSVDataHandler(DataHandler):
             raise
         else:
             return getattr(bars_list[-1][1], val_type)
+
+    def get_latest_bars_values(self, symbol, val_type, N=1):
+        """
+        Returns the last N bar values from the
+        latest_symbol list, or N-k if less available.
+        """
+        for s in self.symbol_list:
+            try:
+                bar = next(self._get_new_bars(s))
+            except StopIteration:
+                self.latest_symbol_data[s].append(bar)
+        self.events.put(MarketEvent())
