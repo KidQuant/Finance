@@ -92,4 +92,48 @@ class HistoricCSVDataHandlerHFT(DataHandler):
         Returns the last bar from the latest_symbol list.
         """
         try:
-            
+            bars_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print('That symbol is not available in the historical data set.')
+            raise
+        else:
+            return bars_list[-N:]
+
+    def get_latest_bar_datetime(self, symbol):
+        """
+        Returns a python datetime object for the last bar.
+        """
+        try:
+            bars_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print('That symbol is not available in the historical data set')
+            raise
+        else:
+            return bars_list[-1][0]
+
+    def get_latest_bar_value(self, symbol, val_type):
+        """
+        Returns one of the Open, High, Low, Volume, or OI
+        values from the pandas Bar series object.
+        """
+
+        try:
+            bar_list = self.latest_symbol_data[symbol]
+        except KeyError:
+            print('That symbol is not available in the historical data set')
+            raise
+        else:
+            return getattr(bar_list[-1][1], val_type)
+
+    def get_latest_bars_values(self, symbol, val_type, N=1):
+        """
+        Return the last N bar values from the
+        latest_symbol list, or N-k if less available.
+        """
+        try:
+            bars_list = self.get_latest_bars(symbols, N)
+        except KeyError:
+            print('That symbol is not available in the historical data set.')
+            raise
+        else:
+            return np.array([getattr(b[1], val_type) for b in bars_list])
