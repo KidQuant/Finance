@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
-def construct_futures_symbols(
-        symbol, start_year=2010, end_year=2014
-    ):
+def construct_futures_symbols(symbol, start_year=2010, end_year=2014):
     """
     Constructs a list of futures contract codes
     for a particular symbol and timeframe.
@@ -47,9 +45,7 @@ def download_contract_from_quandl(contract, dl_dir):
     fc.write(data)
     fc.close()
 
-def download_historical_contracts(
-        symbols, dl_dir, start_year = 2010, end_year = 2014
-    ):
+def download_historical_contracts(symbols, dl_dir, start_year = 2010, end_year = 2014):
     """
     Downloads all futures contracts for a specified symbol
     between a start_year and an end_year.
@@ -71,7 +67,7 @@ if __name__ == '__main__':
 
     #create the start and end years
     start_year = 2013
-    end_end = 2017
+    end_year = 2017
 
     #Download the contracts into the directory
     download_historical_contracts(

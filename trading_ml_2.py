@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib
 from pandas_datareader import data as pdr
@@ -290,11 +290,13 @@ ax1.plot(signals.loc[signals.positions == -1.0].index, signals.short_mavg[signal
 plt.show()
 
 import math
+import pandas as pd
+
 from sklearn import preprocessing, svm
 from sklearn.linear_model import LinearRegression
-from sklearn import cross_val_score
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_validation
+import datetime
+
 
 df = pd.read_csv('stock_dfs/AAPL.csv', index_col = 'Date',parse_dates = True)
 
@@ -319,7 +321,7 @@ df.dropna(inplace=True)
 
 y = np.array(df['label'])
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
 clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
 confidence = clf.score(X_test, y_test)
@@ -337,9 +339,10 @@ for i in forecast_set:
     next_unix += 86400
     df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)]+[i]
 
+plt.figure(figsize=(16,9))
 df['Adj Close'].plot()
 df['Forecast'].plot()
 plt.legend(loc=4)
 plt.xlabel('Date')
 plt.ylabel('Price')
-plt.show()
+plt.savefig('forecast.png', bbox_inches='tight')
