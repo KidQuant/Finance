@@ -6,17 +6,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
+pd.core.common.is_list_like = pd.api.types.is_list_like
 from pandas_datareader import data as pdr
 import pprint
 import statsmodels.tsa.stattools as ts
 import fix_yahoo_finance as yf
 
-from pyfinance.ols import PandasRollingOLS
+from pandas.stats.api import ols
 
 yf.pdr_override()
 
 start = dt.datetime(2016,1,1)
-end = dt.datetime(2018,1,1)
+end = dt.datetime(2017,1,1)
 
 wll = pdr.get_data_yahoo('WLL', start, end)
 wll
@@ -49,8 +50,6 @@ def plot_scatter_series(df, ts1, ts2):
 
 def plot_residuals(df):
     global start, end
-    start = dt.datetime(2017,1,1)
-    end = dt.datetime(2018,1,1)
     months = mdates.MonthLocator()
     fig, ax = plt.subplot()
     ax.plot(df.index, df['res'], label = 'Residuals')
@@ -70,27 +69,26 @@ def plot_residuals(df):
 
 if __name__ == '__main__':
 
-    start = dt.datetime(2016,1,1)
-    end = dt.datetime(2018,1,1)
+    global start, end
 
-    ar = pdr.get_data_yahoo('AR', start, end)
+    apa = pdr.get_data_yahoo('APA', start, end)
     wll = pdr.get_data_yahoo('WLL', start, end)
 
-    df = pd.DataFrame(index = ar.index)
-    df['AR'] = ar['Adj Close']
+    df = pd.DataFrame(index = apa.index)
+    df['APA'] = apa['Adj Close']
     df['WLL'] = wll['Adj Close']
 
     # Plot the two time series
-    plot_price_series(df, 'AR', 'WLL')
+    plot_price_series(df, 'APA', 'WLL')
 
     #Display a scatter plot of the two time series
-    plot_scatter_series(df, 'AR', 'WLL')
+    plot_scatter_series(df, 'APA', 'WLL')
 
     #Calculate optimal hedge ratio 'beta'
-    res = PandasRollingOLS(y = df['WLL'], x = df['AR'])
+    res = PandasRollingOLS(y = df['WLL'], x = df['APA'])
     beta_hr = res.beta.x
 
-    df['res'] = df['WLL'] - beta_hr * df['AR']
+    df['res'] = df['WLL'] - beta_hr * df['APA']
 
     plot_residuals(df)
 
