@@ -1,12 +1,12 @@
 
 # cadf.py
 
+import pandas as pd
+pd.core.common.is_list_like = pd.api.types.is_list_like
 import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import pandas as pd
-pd.core.common.is_list_like = pd.api.types.is_list_like
 from pandas_datareader import data as pdr
 import pprint
 import statsmodels.tsa.stattools as ts
@@ -39,6 +39,7 @@ def plot_price_series(df, ts1, ts2):
     plt.ylabel('Price ($)')
     plt.title('%s and %s Daily Prices' % (ts1,ts2))
     plt.legend()
+    plt.savefig('cointergration.png', bbox_inches='tight')
     plt.show()
 
 def plot_scatter_series(df, ts1, ts2):
@@ -46,6 +47,7 @@ def plot_scatter_series(df, ts1, ts2):
     plt.ylabel('%s Price ($)' % ts2)
     plt.title('%s and %s Price Scatterplot' % (ts1, ts2))
     plt.scatter(df[ts1], df[ts2])
+    plt.savefig('scatter.png', bbox_inches='tight')
     plt.show()
 
 def plot_residuals(df):
@@ -67,6 +69,7 @@ def plot_residuals(df):
     plt.plot(df['res'])
     plt.show()
 
+
 if __name__ == '__main__':
 
     global start, end
@@ -84,9 +87,12 @@ if __name__ == '__main__':
     #Display a scatter plot of the two time series
     plot_scatter_series(df, 'APA', 'WLL')
 
+    y = df['WLL']
+    x = df['APA']
+
     #Calculate optimal hedge ratio 'beta'
-    res = PandasRollingOLS(y = df['WLL'], x = df['APA'])
-    beta_hr = res.beta.x
+    res = sm.OLS(y,x )
+    beta_hr = res.beta_hr.x
 
     df['res'] = df['WLL'] - beta_hr * df['APA']
 
