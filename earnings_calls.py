@@ -35,3 +35,16 @@ from pyLDAvis.gensim import prepare
 
 #evaluate parameter setting
 import statsmodels.api as sm
+
+
+plt.style.use('fivethirtyeight')
+pyLDAvis.enable_notebook()
+warnings.filterwarnings('ignore')
+pd.options.display.float_format = '{:,.f}'.format
+
+PROJECT_DIR = Path().cwd().parent.parent
+earnings_path = PROJECT_DIR / '03_alternative_data' / '02_earnings_calls' / 'transcripts' / 'parsed'
+experiment_path = Path('experiments')
+clean_text = Path('data', 'clean_text.txt')
+
+stop_words = set(pd.read_csv(''))
