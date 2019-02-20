@@ -9,10 +9,11 @@ import pandas as pd
 pd.core.common.is_list_like = pd.api.types.is_list_like
 from pandas_datareader import data as pdr
 import pprint
-import statsmodels.tsa.stattools as ts
+import statsmodels.formula.api as sm
+
 import fix_yahoo_finance as yf
 
-from pandas.stats.api import ols
+import pandas.stats.api
 
 yf.pdr_override()
 
@@ -85,10 +86,10 @@ if __name__ == '__main__':
     plot_scatter_series(df, 'APA', 'WLL')
 
     #Calculate optimal hedge ratio 'beta'
-    res = PandasRollingOLS(y = df['WLL'], x = df['APA'])
-    beta_hr = res.beta.x
+    res = sm.OLS(endog = df['WLL'], exog = df['APA'], missing  = 'drop').fit()
+    beta_hr = sm.OLS.predict(Parameters, df['APA'])
 
-    df['res'] = df['WLL'] - beta_hr * df['APA']
+    df["res"] = df["WLL"] - beta_hr * df['APA']
 
     plot_residuals(df)
 
