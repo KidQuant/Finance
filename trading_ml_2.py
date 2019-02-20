@@ -1,17 +1,13 @@
 import datetime as dt
 import matplotlib.pyplot as plt
-import matplotlib
 from pandas_datareader import data as pdr
 from matplotlib import style
-import matplotlib.pyplot as plt
 import pandas as pd
 import fix_yahoo_finance as yf
 import numpy as np
 
 yf.pdr_override()
 
-matplotlib.use('TkAgg')
-import numpy as np
 style.use('ggplot')
 
 start = dt.datetime(2013,1,1)
