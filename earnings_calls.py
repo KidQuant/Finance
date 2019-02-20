@@ -47,4 +47,13 @@ earnings_path = PROJECT_DIR / '03_alternative_data' / '02_earnings_calls' / 'tra
 experiment_path = Path('experiments')
 clean_text = Path('data', 'clean_text.txt')
 
-stop_words = set(pd.read_csv(''))
+stop_words = set(pd.read_csv('http://ir.dcs.gla.ac.uk/resources/linguistic_utils/stop_words', header = None, squeeze=True))
+
+
+documents = []
+
+for transcripts in earnings_path.iterdir():
+    content = pd.read_csv(transcripts / 'content.csv')
+    documents.extend(content.loc[(content.speaker !='Operator') & (content.content.str.len() > 5), 'content'].tolist())
+
+len(documents)
