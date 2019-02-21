@@ -6,6 +6,8 @@ from matplotlib import style
 import pandas as pd
 import fix_yahoo_finance as yf
 import numpy as np
+from sklearn import cluster, covariance, manifold
+from sklearn.preprocessing import MinMaxScaler
 
 yf.pdr_override()
 
@@ -46,14 +48,79 @@ def get_data_from_yahoo(reload_sp500=False):
     for ticker in tickers:
         print(ticker)
         if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
-            try:
-                df = pdr.get_data_yahoo(ticker, start, end)
-                df.reset_index(inplace=True)
-                df.set_index('Date', inplace=True)
-                df.to_csv('stock_dfs/{}.csv'.format(ticker))
-            except ValueError:
-                pass
+            df = pdr.get_data_yahoo(ticker, start, end)['Close']
+            df.reset_index(inplace=True)
+            df.set_index('Date', inplace=True)
+            df.to_csv('stock_dfs/{}.csv'.format(ticker))
+
         else:
             print('Already have {}'.format(ticker))
 
 get_data_from_yahoo(reload_sp500=True)
+
+symbol_dict = {
+    'TOT': 'Total',
+    'XOM': 'Exxon',
+    'CVX': 'Chevron',
+    'COP': 'ConocoPhillips',
+    'VLO': 'Valero Energy',
+    'MSFT': 'Microsoft',
+    'IBM': 'IBM',
+    'TWX': 'Time Warner',
+    'CMCSA': 'Comcast',
+    'CVC': 'Cablevision',
+    'YHOO': 'Yahoo',
+    'DELL': 'Dell',
+    'HPQ': 'HP',
+    'AMZN': 'Amazon',
+    'TM': 'Toyota',
+    'CAJ': 'Canon',
+    'MTU': 'Mitsubishi',
+    'SNE': 'Sony',
+    'F': 'Ford',
+    'HMC': 'Honda',
+    'NAV': 'Navistar',
+    'NOC': 'Northrop Grumman',
+    'BA': 'Boeing',
+    'KO': 'Coca Cola',
+    'MMM': '3M',
+    'MCD': 'Mc Donalds',
+    'PEP': 'Pepsi',
+    'MDLZ': 'Kraft Foods',
+    'K': 'Kellogg',
+    'UN': 'Unilever',
+    'MAR': 'Marriott',
+    'PG': 'Procter Gamble',
+    'CL': 'Colgate-Palmolive',
+    'GE': 'General Electrics',
+    'WFC': 'Wells Fargo',
+    'JPM': 'JPMorgan Chase',
+    'AIG': 'AIG',
+    'AXP': 'American express',
+    'BAC': 'Bank of America',
+    'GS': 'Goldman Sachs',
+    'AAPL': 'Apple',
+    'SAP': 'SAP',
+    'CSCO': 'Cisco',
+    'TXN': 'Texas instruments',
+    'XRX': 'Xerox',
+    'LMT': 'Lookheed Martin',
+    'WMT': 'Wal-Mart',
+    'WBA': 'Walgreen',
+    'HD': 'Home Depot',
+    'GSK': 'GlaxoSmithKline',
+    'PFE': 'Pfizer',
+    'SNY': 'Sanofi-Aventis',
+    'NVS': 'Novartis',
+    'KMB': 'Kimberly-Clark',
+    'R': 'Ryder',
+    'GD': 'General Dynamics',
+    'RTN': 'Raytheon',
+    'CVS': 'CVS',
+    'CAT': 'Caterpillar',
+    'DD': 'DuPont de Nemours'}
+
+start = dt.datetime(2013,1,1)
+end = dt.datetime.now()
+
+tickers, _ = np.array(list(symbol_dict.items())).T
