@@ -49,7 +49,6 @@ clean_text = Path('data', 'clean_text.txt')
 
 stop_words = set(pd.read_csv('http://ir.dcs.gla.ac.uk/resources/linguistic_utils/stop_words', header = None, squeeze=True))
 
-
 documents = []
 
 for transcripts in earnings_path.iterdir():
@@ -57,3 +56,10 @@ for transcripts in earnings_path.iterdir():
     documents.extend(content.loc[(content.speaker !='Operator') & (content.content.str.len() > 5), 'content'].tolist())
 
 len(documents)
+
+
+word_count = pd.Series(documents).str.split().str.len()
+ax = sns.distplot(np.log(word_count), kde =False)
+ax.set_title('Log word count distribution')
+
+word_count.describe(percentile=np.arange(.1,1.0,.1))
