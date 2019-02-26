@@ -20,13 +20,6 @@ from sklearn.svm import LinearSVC, SVC
 
 import fix_yahoo_finance as yf
 
-from pandas_datareader import data as pdr
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.metrics import confusion_matrix
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.svm import LinearSVC, SVC
 
 yf.pdr_override()
 
@@ -82,8 +75,8 @@ def create_lagged_series(symbol, start_date, end_date, lags=5):
 if __name__ == "__main__":
     # Create a lagged series of the S&P500 US stock market index
     snpret = create_lagged_series(
-    	"^GSPC", datetime.datetime(2001,1,10),
-    	datetime.datetime(2005,12,31), lags=5
+    	"^GSPC", datetime.datetime(2012,1,10),
+    	datetime.datetime(2016,12,31), lags=5
     )
 
     # Use the prior two days of returns as predictor
@@ -92,7 +85,7 @@ if __name__ == "__main__":
     y = snpret["Direction"]
 
     # The test data is split into two parts: Before and after 1st Jan 2005.
-    start_test = datetime.datetime(2005,1,1)
+    start_test = datetime.datetime(2016,1,1)
 
     # Create training and test sets
     X_train = X[X.index < start_test]
@@ -124,8 +117,8 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     # Create a lagged series of the S&P500 US stock market index
     snpret = create_lagged_series(
-    	"^GSPC", datetime.datetime(2001,1,10),
-    	datetime.datetime(2005,12,31), lags=5
+    	"^GSPC", datetime.datetime(2012,1,10),
+    	datetime.datetime(2016,12,31), lags=5
     )
 
     # Use the prior two days of returns as predictor
@@ -134,7 +127,7 @@ if __name__ == "__main__":
     y = snpret["Direction"]
 
     # The test data is split into two parts: Before and after 1st Jan 2005.
-    start_test = datetime.datetime(2005,1,1)
+    start_test = datetime.datetime(2016,1,1)
 
     # Create training and test sets
     X_train = X[X.index < start_test]
