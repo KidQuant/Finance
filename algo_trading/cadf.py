@@ -9,10 +9,11 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from pandas_datareader import data as pdr
 import pprint
-import statsmodels.tsa.stattools as ts
+import statsmodels.formula.api as sm
+
 import fix_yahoo_finance as yf
 
-from pandas.stats.api import ols
+import pandas.stats.api
 
 yf.pdr_override()
 
@@ -91,10 +92,15 @@ if __name__ == '__main__':
     x = df['APA']
 
     #Calculate optimal hedge ratio 'beta'
+<<<<<<< HEAD
+    res = sm.OLS(endog = df['WLL'], exog = df['APA'], missing  = 'drop').fit()
+    beta_hr = sm.OLS.predict(Parameters, df['APA'])
+=======
     res = sm.OLS(y,x )
     beta_hr = res.beta_hr.x
+>>>>>>> bd4c6c02eb14c53bc626daeee42d1c5c1f963c84
 
-    df['res'] = df['WLL'] - beta_hr * df['APA']
+    df["res"] = df["WLL"] - beta_hr * df['APA']
 
     plot_residuals(df)
 
