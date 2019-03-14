@@ -132,4 +132,29 @@ plt.legend(['Short Call', 'Short Put'])
 
 plt.show()
 
+def bull_spreads(S,E1,E2,Price1,Price2):
+    
+    P_1 = long_calls(S,E1,Price1)
+    P_2 = short_call(S,E2,Price2)
+    return [x+y for x,y in zip(P_1,P_2)]
 
+def bear_spread(S,E1,E2,Price1,Price2):
+
+    P = bull_spread(S,E1,E2,Price1,Price2)
+    return [-1.0*p + 1.0 for p in P]
+
+def straddle(S,E,Price1,Price2):
+
+    P_1 = long_call(S,E,Price1)
+    P_2 = long_put(S,E,Price2)
+    return [x+y for x,y in zip(P_1,P_2)]
+
+def risk_reversal(S,E1,E2,Price1,Price2):
+
+    P_1 = long_call(S,E1, Price1)
+    P_1 = short_put(S,E2,Price2)
+    return [x + y for x, y in zip(P_1,P_2)]
+
+def strangle(S, E1, E2, Price1, Price2):
+
+    
