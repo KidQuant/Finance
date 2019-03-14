@@ -74,11 +74,10 @@ plt.plot(S, lc_P, 'r')
 plt.plot(S, lp_P, 'b')
 plt.legend(["Long Call", "Long Put"])
 
-
-bc_P = binary_call(S,100, 10)
+bc_C = binary_call(S,100, 10)
 bp_P = binary_put(S,100, 10)
 plt.subplot(222)
-plt.plot(S, bc_P, 'b')
+plt.plot(S, bc_C, 'b')
 plt.plot(S, bp_P, 'r')
 plt.legend(["Binary Call", "Binary Put"])
 
@@ -219,11 +218,4 @@ plt.annotate('Strike Price',
 plt.title('Strip')
 
 plt.show()
-
-
-
-
-
-
-
 
