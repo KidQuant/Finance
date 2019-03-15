@@ -142,80 +142,102 @@ def strip(S, E1, Price1, Price2):
     P_2 = [2*p for p in P_2]
     return [x+y for x,y in zip(P_1, P_2)]
 
-fig, ax = plt.subplot(nrow=3, ncols=2, sharex=True, sharey=True, figsize=(30,25))
-fig.suptitle('Payoff Function for Long/Short Put/Calls', fontsize=20, fontweight='bold')
-fig.text(0.5, 0.08, 'Stock/Underlying Price ($)', ha='center', fontsize=18,fontweight='bold')
-fig.text(0.08, 0.5, 'Option Payoff ($)', va = 'center', rotation='vertical', fontsize=18, fontweight='bold')
+fig, ax = plt.subplots(nrows=3, ncols=2, sharex=True, sharey=True, figsize=(30, 25))
+fig.suptitle('Payoff Functions for Long/Short Put/Calls', fontsize=20, fontweight='bold')
+fig.text(0.5, 0.08, 'Stock/Underlying Price ($)', ha='center', fontsize=18, fontweight='bold')
+fig.text(0.08, 0.5, 'Option Payoff ($)', va='center', rotation='vertical', fontsize=18, fontweight='bold')
 
 plt.subplot(321)
-P = butterfly_spread(S,100,125,150,10,5,5)
-P_1 = long_call(S,100,10)
-P_2 = long_call(S,150,5)
-P_3 = short_call(S,125,5)
-P_3 = [2*p for p in P_3]
-plt.plot(S,P_1,'r--')
-plt.plot(S,P_2,'r--')
-plt.plot(S,P_3,'b--')
-plt.plot(S,P)
-plt.legend(['Butterfly Spread', 'Long Call','Long Call','Short Call'])
-plt.title('Butterfly Spread')
+P = butterfly_spread(S, 100, 125, 150, 10, 5, 5)
+P_1 = long_call(S, 100, 10)
+P_2 = long_call(S, 150, 5)
+P_3 = short_call(S, 125, 5)
+P_3 =[2*p for p in P_3]
+plt.plot(S, P_1, 'r--')
+plt.plot(S, P_2, 'r--')
+plt.plot(S, P_3, 'b--')
+plt.plot(S, P)
+plt.legend(["Butterfly Spread", "Long Call", "Long Call", "Short Call"])
+plt.title("Butterfly Spread")
 
 plt.subplot(322)
-P1 = bull_spread(S,50,100,15,10)
-long_c = long_call(S,50,15)
-short_c = short_call(S,100,10)
+P1 = bull_spread(S,50, 100, 15, 10)
+long_c = long_call(S, 50, 15)
+short_c = short_call(S, 100, 10)
+    
+plt.plot(S, P1, 'r')
+plt.plot(S, long_c, 'r--')
+plt.plot(S, short_c, 'b--')
 
-plt.plot(S,P1, 'r')
-plt.plot(S,long_c,'r--')
-plt.plot(S,short_c,'b--')
-
-plt.legend(['Bull Spread', 'Long Call', 'Short Call'])
-plt.title('Bull Spread')
+plt.legend(["Bull Spread", "Long Call", "Short Call"])
+plt.title("Bull Spread")
 
 plt.subplot(323)
-P = straddle(S,100,10,10)
-P_longcall = long_call(S,100,10)
-P_longput = long_put(S,100,10)
-plt.plot(S,P)
-plt.plot(S,P_longcall,'r--')
-plt.plot(S,P_longput,'b--')
-plt.legend(['Straddle', 'Long Call', 'Long Put'])
-plt.title('Straddle')
+P = straddle(S,100, 10, 10)
+P_longcall = long_call(S, 100, 10)
+P_longput = long_put(S, 100, 10)
+plt.plot(S, P) 
+plt.plot(S, P_longcall, 'r--')
+plt.plot(S, P_longput, 'b--')
+plt.legend(["Straddle", "Long Call", "Long Put"])
+plt.title("Straddle")
 
 plt.subplot(324)
-P = risk_reversal(S,100,75,10,10)
-P_longcall = long_call(S,100,10)
-P_shortput = short_put(S,75,10)
-plt.plot(S,P,'g')
-plt.plot(S,P_longcall,'b--')
-plt.plot(S,P_shortput,'r--')
-plt.legend(['Risk Reversal', 'Long Call', 'Short Put'])
-plt.title('Risk-Reversal')
+P = risk_reversal(S,100,75, 10, 10)
+P_longcall = long_call(S, 100, 10)
+P_shortput = short_put(S,75, 10)
+plt.plot(S, P, 'g')
+plt.plot(S, P_longcall, 'b--')
+plt.plot(S, P_shortput, 'r--')
+plt.legend(["Risk Reversal", "Long Call", "Short Put"])
+plt.title("Risk-Reversal")
 
 plt.subplot(325)
-P = strangle(S,100,75,10,10)
-P_longcall = long_call(S,100,10)
-P_longput = long_put(S,75,10)
-plt.plot(S,P,'g')
-plt.plot(S,P_longcall,'b--')
-plt.plot(S,P_longput,'r--')
-plt.legend(['Strangle', 'Long Short', 'Long Put'])
-plt.title('Strangle')
+P = strangle(S,100, 75, 10, 10)
+P_longcall = long_call(S, 100, 10)
+P_longput = long_put(S, 75, 10)
+plt.plot(S, P, 'g')
+plt.plot(S, P_longcall, 'b--')
+plt.plot(S, P_longput, 'r--')
+plt.legend(["Strangle", "Long Short", "Long Put"])
+plt.title("Strangle")
 
 plt.subplot(326)
-P_1 = long_call(S,100,10)
-P_2 = long_put(S,100,10)
-P = strip(S,100,10,10)
-plt.plot(S,P,'g')
-plt.plot(S,P_1,'r--')
-plt.plot(S,P_2,'b--')
+P_1 = long_call(S, 100, 10)
+P_2 = long_put(S, 100, 10)
+P_2 = [2*p for p in P_2]
+P = strip(S, 100, 10, 10 )
+plt.plot(S, P, 'g')
+plt.plot(S, P_1, 'r--')
+plt.plot(S, P_2, 'b--')
 plt.plot([100,100],[-50,50],'black')
-plt.legend(['Strip','Long Call','Long Put'])
-plt.annotate('Strike Price',
-            xy=(100,-50),
-            yxtext=(125,-30),
+plt.legend(["Strip", "Long Call", "Long Put"])
+plt.annotate('Strike Price', 
+            xy=(100, -50), 
+            xytext=(125, -30), 
             arrowprops = dict(facecolor='black', shrink=0.01))
-plt.title('Strip')
+plt.title("Strip")
 
 plt.show()
+
+from scipy.stats import norm
+
+#S: underlying stock price
+#K: Option stike price
+#r: risk free rate
+#D: dividend value
+#vol: Volatility
+#T: time to expiry (assumed that we're measuring from t=0 to T)
+
+def d1_calc(S,K,r,vol,T,t):
+    #Calculates d1 in the BSM equation
+    return (np.log(S/K) + (r + 0.5 * vol**2) * (T-t)/(vol*np.sqrt(T-t)))
+
+def BS_call(S,K,r,vol,T,t):
+    d1 = d1_calc(S,K,r,vol,T,t)
+    d2 = d1 - vol * np.sqrt(T)
+    return S * norm.cdf(d1) - K * np.exp(-r*T)*norm.cdf(d2)
+
+def BS_put(S,K,r,vol,T,t):
+    return BS_call(S,K,r,vol,T,t) - S + np.exp(-r*(T-t))*K
 
