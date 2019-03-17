@@ -49,8 +49,9 @@ if __name__ == '__main__':
 
         y = stats.beta.pdf(x, 1 + heads, 1 + N - heads)
         plt.plot(x,y, label = 'observe %d tosses,\n %d heads' % (N, heads))
-        ax.set_title("%s trials, %s heads" % (N, heads))
+        plt.fill_between(x, 0, y, color="#aaaadd", alpha=0.5)
 
+# Expand plot to cover full width/height and show it
 plt.tight_layout()
 plt.show()
 
