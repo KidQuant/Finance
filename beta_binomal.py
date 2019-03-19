@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
     #Create a list of number of coin tosses ("Bernoulli trials")
-    number_of_trials = [100]
+    number_of_trials = [0, 2, 10, 20, 50, 500]
 
     #Conduct 500 coin tosses and output into a list of 0s and 1s
     # where 0 represents a tail and 1 represents a head
@@ -53,6 +53,7 @@ if __name__ == '__main__':
 
 # Expand plot to cover full width/height and show it
 plt.tight_layout()
+plt.savefig('bernoulli_trials.png', bbox_inches = 'tight')
 plt.show()
 
 

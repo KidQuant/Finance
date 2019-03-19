@@ -1,15 +1,17 @@
 
 #%% Import packages
 
-import pymc3 as pm
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-data = pd.DataFrame({'X': np.random.RandomState(42).choice(map(lambda x: float(x)/10000.0, 
-np.arange(10000)), 10000, replace = false)})
+#%% Import packages
 
-data['Y'] = 5 + 3*data['X'] + np.random.RandomState(42).normal(0.0, 0.5, 10000)
+data = pd.DataFrame({'X': np.random.RandomState(42).choice(map(lambda x: float(x)/100.0, 
+np.arange(10000)), 10000, replace = False)})
+
+data['Y'] = 5 + 3*data['X'] + np.random.RandomState(42).normal(0.0, 0.5, 10000.0)
 
 with pm.Model() as normal_model:
     # The prior for the data likelihood is a Normal Distribution
@@ -38,3 +40,9 @@ plt.scatter(*(z[0]['X']).T)
 plt.hlines([-1,1], 0, 3000, linestyles='dotted')
 plt.xlim(0, 3000)
 plt.show()
+
+
+#%%
+
+data = pd.DataFrame({"X": np.random.RandomState(42).choice(map(lambda x: float(x)/100.0, np.arange(10000)), 10000, replace=False)})
+data["Y"] = 5 + 3*data["X"] + np.random.RandomState(42).normal(0.0, 0.5, 10000)
