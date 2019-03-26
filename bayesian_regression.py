@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 
 #%% Import packages
 
-data = pd.DataFrame({'X': np.random.RandomState(42).choice(map(lambda x: float(x)/100.0, 
-np.arange(10000)), 10000, replace = False)})
+data = pd.DataFrame({'X': np.random.RandomState(42).choice(map(lambda x: float(x)/100.0, np.arange(10000)), 10000, replace = False)})
+
+
 
 data['Y'] = 5 + 3*data['X'] + np.random.RandomState(42).normal(0.0, 0.5, 10000.0)
 
@@ -46,3 +47,12 @@ plt.show()
 
 data = pd.DataFrame({"X": np.random.RandomState(42).choice(map(lambda x: float(x)/100.0, np.arange(10000)), 10000, replace=False)})
 data["Y"] = 5 + 3*data["X"] + np.random.RandomState(42).normal(0.0, 0.5, 10000)
+
+
+np.random.RandomState(42).choice(map(lambda x: float(x)/100.0, np.arange(10000)), 10000, replace = False)
+
+results = np.array(map(lambda x: float(x)/100.0, np.arange(10000)))
+
+np.random.RandomState(42).choice(results)
+
+type(results)

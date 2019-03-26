@@ -11,17 +11,16 @@ from scipy.stats import norm
 
 #%%
 
-if __name__ == "__main__":
-
+if __name__ == "__main__" :
     # Set up the X and Y dimensions
     fig = plt.figure()
     ax = Axes3D(fig)
     X = np.arange(0,20,0.25)
     Y = np.arange(-10,10,0.25)
-    X, Y = np.meshgrid
+    X, Y = np.meshgrid(X,Y)
 
     # Create the univarate normal coefficients
-    # of intercept and slope, as well as the 
+    # of intercept and slope, as well as the
     # conditional probability density
     beta0 = -5.0
     beta1 = 0.5

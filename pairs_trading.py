@@ -1,3 +1,5 @@
+#%% 
+
 import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib
@@ -16,6 +18,8 @@ import pickle
 import requests
 import os
 
+#%% Import S&P 500 Tickers
+
 def save_sp500_tickers():
     resp = requests.get('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
     soup = bs.BeautifulSoup(resp.text, 'lxml')
@@ -32,6 +36,8 @@ def save_sp500_tickers():
     return tickers
 
 save_sp500_tickers()
+
+#%%
 
 def get_data_from_yahoo(reload_sp500=False):
 
