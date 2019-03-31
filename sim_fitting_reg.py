@@ -119,3 +119,5 @@ if __name__ == "__main__":
     plt.plot(x, y, label="True Regression Line", lw=3., c="green")
     plt.legend(loc=0)
     plt.show()
+
+    
