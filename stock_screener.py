@@ -1,0 +1,97 @@
+import urllib,webbrowser
+
+tickers = ['TSE:AAB', 'TSE:AAR', 'TSE:AAV', 'TSE:ABK', 'TSE:ABT', 'TSE:ABX', 'TSE:AC', 'TSE:ACB', 'TSE:ACD', 'TSE:ACO', 'TSE:ACQ', 'TSE:ACR', 'TSE:ACZ', 'TSE:AD', 'TSE:ADC', 'TSE:ADN', 'TSE:ADW', 'TSE:AEF', 'TSE:AEM', 'TSE:AEZS', 'TSE:AF', 'TSE:AFN', 'TSE:AGF', 'TSE:AGI', 'TSE:AGT', 'TSE:AGU', 'TSE:AHY', 'TSE:AI', 'TSE:AIF', 'TSE:AIM', 'TSE:AJX', 'TSE:AKG', 'TSE:AKT', 'TSE:ALA', 'TSE:ALB', 'TSE:ALC', 'TSE:ALO', 'TSE:ALS', 'TSE:AMI', 'TSE:AMM', 'TSE:ANX', 'TSE:AOG', 'TSE:AOI', 'TSE:AP', 'TSE:APH', 'TSE:APR', 'TSE:APS', 'TSE:APY', 'TSE:AQA', 'TSE:AQN', 'TSE:AQY', 'TSE:AR', 'TSE:ARE', 'TSE:ARG', 'TSE:ARX', 'TSE:ARZ', 'TSE:ASND', 'TSE:ASO', 'TSE:ASP', 'TSE:ASR', 'TSE:ATA', 'TSE:ATD', 'TSE:ATH', 'TSE:ATL', 'TSE:ATP', 'TSE:ATZ', 'TSE:AUG', 'TSE:AUI', 'TSE:AUMN', 'TSE:AUP', 'TSE:AV', 'TSE:AVK', 'TSE:AVL', 'TSE:AVO', 'TSE:AVP', 'TSE:AW', 'TSE:AX', 'TSE:AXR', 'TSE:AXY', 'TSE:AYA', 'TSE:AYM', 'TSE:AZ', 'TSE:AZP', 'TSE:AZZ', 'TSE:BAA', 'TSE:BAD', 'TSE:BAM', 'TSE:BANK', 'TSE:BAR', 'TSE:BB', 'TSE:BBD', 'TSE:BBL', 'TSE:BBU', 'TSE:BCB', 'TSE:BCE', 'TSE:BCI', 'TSE:BDI', 'TSE:BDT', 'TSE:BEI', 'TSE:BEK', 'TSE:BEP', 'TSE:BGI', 'TSE:BIG', 'TSE:BIOA', 'TSE:BIP', 'TSE:BIR', 'TSE:BK', 'TSE:BKI', 'TSE:BKL', 'TSE:BKX', 'TSE:BLB', 'TSE:BLDP', 'TSE:BLU', 'TSE:BLX', 'TSE:BMO', 'TSE:BNC', 'TSE:BND', 'TSE:BNE', 'TSE:BNG', 'TSE:BNP', 'TSE:BNS', 'TSE:BOS', 'TSE:BOX', 'TSE:BOY', 'TSE:BPF', 'TSE:BPO', 'TSE:BPS', 'TSE:BPY', 'TSE:BR', 'TSE:BRB', 'TSE:BRE', 'TSE:BRF', 'TSE:BRIO', 'TSE:BRY', 'TSE:BSC', 'TSE:BSD', 'TSE:BSE', 'TSE:BSO', 'TSE:BSX', 'TSE:BTB', 'TSE:BTE', 'TSE:BTO', 'TSE:BU', 'TSE:BUA', 'TSE:BUI', 'TSE:BX', 'TSE:BXE', 'TSE:BXF', 'TSE:BYD', 'TSE:BYL', 'TSE:CAE', 'TSE:CAGG', 'TSE:CAL', 'TSE:CAM', 'TSE:CAN', 'TSE:CAR', 'TSE:CARA', 'TSE:CAS', 'TSE:CBD', 'TSE:CBH', 'TSE:CBL', 'TSE:CBN', 'TSE:CBO', 'TSE:CBQ', 'TSE:CBT', 'TSE:CCA', 'TSE:CCI', 'TSE:CCL', 'TSE:CCM', 'TSE:CCO', 'TSE:CCS', 'TSE:CCX', 'TSE:CCZ', 'TSE:CDD', 'TSE:CDH', 'TSE:CDV', 'TSE:CDZ', 'TSE:CED', 'TSE:CEE', 'TSE:CEF', 'TSE:CERV', 'TSE:CES', 'TSE:CET', 'TSE:CEU', 'TSE:CEW', 'TSE:CF', 'TSE:CFF', 'TSE:CFP', 'TSE:CFW', 'TSE:CFX', 'TSE:CG', 'TSE:CGG', 'TSE:CGI', 'TSE:CGL', 'TSE:CGO', 'TSE:CGR', 'TSE:CGT', 'TSE:CGX', 'TSE:CGY', 'TSE:CHB', 'TSE:CHE', 'TSE:CHH', 'TSE:CHP', 'TSE:CHR', 'TSE:CHW', 'TSE:CIA', 'TSE:CIC', 'TSE:CIF', 'TSE:CIGI', 'TSE:CIQ', 'TSE:CIU', 'TSE:CIX', 'TSE:CJ', 'TSE:CJR', 'TSE:CJT', 'TSE:CKE', 'TSE:CKI', 'TSE:CLF', 'TSE:CLG', 'TSE:CLR', 'TSE:CLS', 'TSE:CM', 'TSE:CMED', 'TSE:CMG', 'TSE:CMH', 'TSE:CMMC', 'TSE:CMR', 'TSE:CNE', 'TSE:CNL', 'TSE:CNQ', 'TSE:CNR', 'TSE:CNT', 'TSE:CNU', 'TSE:COM', 'TSE:CONA', 'TSE:COP', 'TSE:COW', 'TSE:CP', 'TSE:CPD', 'TSE:CPF', 'TSE:CPG', 'TSE:CPH', 'TSE:CPI', 'TSE:CPX', 'TSE:CQE', 'TSE:CR', 'TSE:CRH', 'TSE:CRP', 'TSE:CRR', 'TSE:CRT', 'TSE:CRWN', 'TSE:CS', 'TSE:CSD', 'TSE:CSE', 'TSE:CSH', 'TSE:CSM', 'TSE:CSU', 'TSE:CSW', 'TSE:CSY', 'TSE:CTC', 'TSE:CTF', 'TSE:CTU', 'TSE:CTX', 'TSE:CU', 'TSE:CUD', 'TSE:CUF', 'TSE:CUP', 'TSE:CVD', 'TSE:CVE', 'TSE:CVG', 'TSE:CWB', 'TSE:CWF', 'TSE:CWI', 'TSE:CWL', 'TSE:CWW', 'TSE:CWX', 'TSE:CXA', 'TSE:CXF', 'TSE:CXI', 'TSE:CXN', 'TSE:CXR', 'TSE:CYB', 'TSE:CYH', 'TSE:CZN', 'TSE:CZQ', 'TSE:D', 'TSE:DA', 'TSE:DBO', 'TSE:DC', 'TSE:DCC', 'TSE:DCD', 'TSE:DCF', 'TSE:DCG', 'TSE:DCM', 'TSE:DCP', 'TSE:DCS', 'TSE:DCU', 'TSE:DDC', 'TSE:DEE', 'TSE:DEN', 'TSE:DF', 'TSE:DFC', 'TSE:DFD', 'TSE:DFN', 'TSE:DFU', 'TSE:DGC', 'TSE:DGR', 'TSE:DGS', 'TSE:DHX', 'TSE:DII', 'TSE:DIN', 'TSE:DIR', 'TSE:DISC', 'TSE:DIV', 'TSE:DLR', 'TSE:DML', 'TSE:DNA', 'TSE:DNG', 'TSE:DNT', 'TSE:DOL', 'TSE:DOO', 'TSE:DPM', 'TSE:DQD', 'TSE:DQI', 'TSE:DR', 'TSE:DRA', 'TSE:DRG', 'TSE:DRM', 'TSE:DRT', 'TSE:DRWI', 'TSE:DRX', 'TSE:DS', 'TSE:DSG', 'TSE:DSL', 'TSE:DW', 'TSE:DXC', 'TSE:DXG', 'TSE:DXI', 'TSE:DXM', 'TSE:DXO', 'TSE:DXP', 'TSE:DXU', 'TSE:E', 'TSE:EBC', 'TSE:ECA', 'TSE:ECF', 'TSE:ECI', 'TSE:ECN', 'TSE:ECO', 'TSE:ECS', 'TSE:EDGF', 'TSE:EDR', 'TSE:EDT', 'TSE:EDV', 'TSE:EFH', 'TSE:EFL', 'TSE:EFN', 'TSE:EFR', 'TSE:EFX', 'TSE:EGI', 'TSE:EGL', 'TSE:EHE', 'TSE:EIF', 'TSE:EIT', 'TSE:ELD', 'TSE:ELF', 'TSE:ELR', 'TSE:ELV', 'TSE:EMA', 'TSE:EML', 'TSE:EMP', 'TSE:ENB', 'TSE:ENF', 'TSE:ENGH', 'TSE:ENI', 'TSE:ENT', 'TSE:EOM', 'TSE:EOX', 'TSE:EPI', 'TSE:EPS', 'TSE:EQB', 'TSE:EQI', 'TSE:ER', 'TSE:ERD', 'TSE:ERF', 'TSE:ERM', 'TSE:ESI', 'TSE:ESM', 'TSE:ESN', 'TSE:ESP', 'TSE:ET', 'TSE:ETG', 'TSE:ETP', 'TSE:ETX', 'TSE:EUR', 'TSE:EVT', 'TSE:EXE', 'TSE:EXF', 'TSE:EXGG', 'TSE:EXN', 'TSE:FAH', 'TSE:FAI', 'TSE:FAO', 'TSE:FAP', 'TSE:FAR', 'TSE:FBU', 'TSE:FC', 'TSE:FCE', 'TSE:FCR', 'TSE:FCS', 'TSE:FCU', 'TSE:FCY', 'TSE:FDE', 'TSE:FDL', 'TSE:FDV', 'TSE:FDY', 'TSE:FEC', 'TSE:FF', 'TSE:FFH', 'TSE:FFI', 'TSE:FFN', 'TSE:FGB', 'TSE:FGX', 'TSE:FHB', 'TSE:FHC', 'TSE:FHD', 'TSE:FHE', 'TSE:FHF', 'TSE:FHG', 'TSE:FHH', 'TSE:FHM', 'TSE:FHQ', 'TSE:FHU', 'TSE:FIE', 'TSE:FIG', 'TSE:FIH', 'TSE:FLCI', 'TSE:FLDM', 'TSE:FLI', 'TSE:FLRM', 'TSE:FLUS', 'TSE:FM', 'TSE:FN', 'TSE:FNM', 'TSE:FNV', 'TSE:FOOD', 'TSE:FPR', 'TSE:FQC', 'TSE:FR', 'TSE:FRII', 'TSE:FRL', 'TSE:FRU', 'TSE:FRX', 'TSE:FSD', 'TSE:FSF', 'TSE:FSL', 'TSE:FSR', 'TSE:FST', 'TSE:FSV', 'TSE:FSY', 'TSE:FSZ', 'TSE:FT', 'TSE:FTB', 'TSE:FTG', 'TSE:FTN', 'TSE:FTP', 'TSE:FTS', 'TSE:FTT', 'TSE:FTU', 'TSE:FUD', 'TSE:FUM', 'TSE:FUT', 'TSE:FVI', 'TSE:FVL', 'TSE:FXM', 'TSE:G', 'TSE:GAF', 'TSE:GAS', 'TSE:GBF', 'TSE:GBT', 'TSE:GBU', 'TSE:GC', 'TSE:GCG', 'TSE:GCL', 'TSE:GCM', 'TSE:GCS', 'TSE:GDC', 'TSE:GDG', 'TSE:GDI', 'TSE:GDL', 'TSE:GDS', 'TSE:GEI', 'TSE:GEN', 'TSE:GEO', 'TSE:GGA', 'TSE:GGD', 'TSE:GH', 'TSE:GIB', 'TSE:GIL', 'TSE:GLG', 'TSE:GMM', 'TSE:GMO', 'TSE:GMP', 'TSE:GMX', 'TSE:GOOS', 'TSE:GPR', 'TSE:GPS', 'TSE:GQM', 'TSE:GRL', 'TSE:GRP', 'TSE:GRT', 'TSE:GS', 'TSE:GSB', 'TSE:GSC', 'TSE:GSY', 'TSE:GTE', 'TSE:GTX', 'TSE:GUD', 'TSE:GUY', 'TSE:GVC', 'TSE:GWO', 'TSE:GWR', 'TSE:GXE', 'TSE:GXO', 'TSE:GZT', 'TSE:H', 'TSE:HAB', 'TSE:HAC', 'TSE:HAD', 'TSE:HAF', 'TSE:HAJ', 'TSE:HAL', 'TSE:HARC', 'TSE:HAU', 'TSE:HAZ', 'TSE:HBB', 'TSE:HBC', 'TSE:HBD', 'TSE:HBF', 'TSE:HBG', 'TSE:HBL', 'TSE:HBM', 'TSE:HBP', 'TSE:HBU', 'TSE:HCG', 'TSE:HCN', 'TSE:HE', 'TSE:HEA', 'TSE:HED', 'TSE:HEE', 'TSE:HEF', 'TSE:HEJ', 'TSE:HEN', 'TSE:HEP', 'TSE:HER', 'TSE:HEU', 'TSE:HEW', 'TSE:HEX', 'TSE:HFD', 'TSE:HFP', 'TSE:HFR', 'TSE:HFU', 'TSE:HFY', 'TSE:HGC', 'TSE:HGD', 'TSE:HGI', 'TSE:HGM', 'TSE:HGR', 'TSE:HGU', 'TSE:HGY', 'TSE:HHF', 'TSE:HHL', 'TSE:HID', 'TSE:HIG', 'TSE:HII', 'TSE:HIU', 'TSE:HIX', 'TSE:HLC', 'TSE:HLF', 'TSE:HLP', 'TSE:HMA', 'TSE:HMF', 'TSE:HMM', 'TSE:HMMJ', 'TSE:HMP', 'TSE:HND', 'TSE:HNL', 'TSE:HNU', 'TSE:HNY', 'TSE:HNZ', 'TSE:HOD', 'TSE:HOG', 'TSE:HOT', 'TSE:HOU', 'TSE:HPF', 'TSE:HPR', 'TSE:HPS', 'TSE:HQD', 'TSE:HQU', 'TSE:HR', 'TSE:HRA', 'TSE:HRR', 'TSE:HRT', 'TSE:HRX', 'TSE:HSB', 'TSE:HSD', 'TSE:HSE', 'TSE:HSH', 'TSE:HSL', 'TSE:HSM', 'TSE:HSU', 'TSE:HTA', 'TSE:HTB', 'TSE:HTH', 'TSE:HTO', 'TSE:HUC', 'TSE:HUF', 'TSE:HUG', 'TSE:HUL', 'TSE:HUN', 'TSE:HUV', 'TSE:HUZ', 'TSE:HVI', 'TSE:HVU', 'TSE:HWD', 'TSE:HWF', 'TSE:HWO', 'TSE:HXD', 'TSE:HXE', 'TSE:HXF', 'TSE:HXH', 'TSE:HXQ', 'TSE:HXS', 'TSE:HXT', 'TSE:HXU', 'TSE:HXX', 'TSE:HYB', 'TSE:HYD', 'TSE:HYG', 'TSE:HYI', 'TSE:HZD', 'TSE:HZM', 'TSE:HZU', 'TSE:IAG', 'TSE:IAM', 'TSE:IBG', 'TSE:ICE', 'TSE:ICP', 'TSE:IDG', 'TSE:IDR', 'TSE:IFA', 'TSE:IFB', 'TSE:IFC', 'TSE:IFL', 'TSE:IFP', 'TSE:IGG', 'TSE:IGM', 'TSE:IHL', 'TSE:III', 'TSE:IIP', 'TSE:ILV', 'TSE:IMG', 'TSE:IMO', 'TSE:IMP', 'TSE:IMV', 'TSE:INC', 'TSE:INE', 'TSE:INO', 'TSE:INQ', 'TSE:INSR', 'TSE:INV', 'TSE:IPCI', 'TSE:IPCO', 'TSE:IPL', 'TSE:IPO', 'TSE:IQD', 'TSE:IRG', 'TSE:IRON', 'TSE:ISL', 'TSE:ISV', 'TSE:ITC', 'TSE:ITH', 'TSE:ITP', 'TSE:ITX', 'TSE:IVN', 'TSE:JAG', 'TSE:JE', 'TSE:JFS', 'TSE:JOY', 'TSE:JWEL', 'TSE:K', 'TSE:KAT', 'TSE:KBL', 'TSE:KDX', 'TSE:KEG', 'TSE:KEL', 'TSE:KER', 'TSE:KEW', 'TSE:KEY', 'TSE:KFS', 'TSE:KL', 'TSE:KLG', 'TSE:KLS', 'TSE:KML', 'TSE:KMP', 'TSE:KOR', 'TSE:KPT', 'TSE:KRN', 'TSE:KWH', 'TSE:KXS', 'TSE:L', 'TSE:LAC', 'TSE:LAM', 'TSE:LAS', 'TSE:LB', 'TSE:LBS', 'TSE:LCS', 'TSE:LEAF', 'TSE:LFE', 'TSE:LFX', 'TSE:LGD', 'TSE:LGO', 'TSE:LGQ', 'TSE:LGT', 'TSE:LIF', 'TSE:LIQ', 'TSE:LMC', 'TSE:LN', 'TSE:LNF', 'TSE:LNR', 'TSE:LOW', 'TSE:LRT', 'TSE:LS', 'TSE:LUC', 'TSE:LUG', 'TSE:LUN', 'TSE:LVN', 'TSE:LVU', 'TSE:LXR', 'TSE:LYD', 'TSE:MAG', 'TSE:MAL', 'TSE:MAR', 'TSE:MAW', 'TSE:MAX', 'TSE:MAY', 'TSE:MBA', 'TSE:MBB', 'TSE:MBK', 'TSE:MBN', 'TSE:MBX', 'TSE:MCB', 'TSE:MCLC', 'TSE:MDA', 'TSE:MDF', 'TSE:MDI', 'TSE:MDS', 'TSE:ME', 'TSE:MEE', 'TSE:MEG', 'TSE:MEQ', 'TSE:MERC', 'TSE:MEU', 'TSE:MFC', 'TSE:MFI', 'TSE:MFR', 'TSE:MFT', 'TSE:MG', 'TSE:MGA', 'TSE:MGB', 'TSE:MIC', 'TSE:MID', 'TSE:MIF', 'TSE:MIN', 'TSE:MINT', 'TSE:MKB', 'TSE:MKC', 'TSE:MKP', 'TSE:MKZ', 'TSE:MLD', 'TSE:MMP', 'TSE:MND', 'TSE:MNR', 'TSE:MNS', 'TSE:MNT', 'TSE:MNW', 'TSE:MOGO', 'TSE:MOZ', 'TSE:MPC', 'TSE:MPVD', 'TSE:MQI', 'TSE:MR', 'TSE:MRC', 'TSE:MRD', 'TSE:MRE', 'TSE:MRG', 'TSE:MRT', 'TSE:MRU', 'TSE:MSI', 'TSE:MSL', 'TSE:MSV', 'TSE:MTL', 'TSE:MTY', 'TSE:MUB', 'TSE:MULC', 'TSE:MUMC', 'TSE:MUS', 'TSE:MUX', 'TSE:MWD', 'TSE:MX', 'TSE:MXF', 'TSE:MXG', 'TSE:MXU', 'TSE:NA', 'TSE:NAF', 'TSE:NAL', 'TSE:NB', 'TSE:NBZ', 'TSE:NCA', 'TSE:NCC', 'TSE:NCD', 'TSE:NCF', 'TSE:NCU', 'TSE:NDM', 'TSE:NDQ', 'TSE:NEPT', 'TSE:NEW', 'TSE:NEXT', 'TSE:NFI', 'TSE:NG', 'TSE:NGD', 'TSE:NGI', 'TSE:NGQ', 'TSE:NHK', 'TSE:NIF', 'TSE:NII', 'TSE:NKO', 'TSE:NLN', 'TSE:NML', 'TSE:NMX', 'TSE:NOA', 'TSE:NPC', 'TSE:NPF', 'TSE:NPI', 'TSE:NPK', 'TSE:NPS', 'TSE:NRE', 'TSE:NRGY', 'TSE:NRI', 'TSE:NSU', 'TSE:NUS', 'TSE:NVA', 'TSE:NVCN', 'TSE:NVU', 'TSE:NWC', 'TSE:NWH', 'TSE:NXC', 'TSE:NXE', 'TSE:NXF', 'TSE:NXJ', 'TSE:OBE', 'TSE:OCS', 'TSE:OGC', 'TSE:OGD', 'TSE:OLY', 'TSE:OMI', 'TSE:ONC', 'TSE:ONEX', 'TSE:ONR', 'TSE:OPS', 'TSE:OR', 'TSE:ORA', 'TSE:ORL', 'TSE:ORV', 'TSE:OSB', 'TSE:OSF', 'TSE:OSK', 'TSE:OSL', 'TSE:OSP', 'TSE:OTEX', 'TSE:OXC', 'TSE:OXF', 'TSE:P', 'TSE:PAAS', 'TSE:PAR', 'TSE:PATH', 'TSE:PAY', 'TSE:PBD', 'TSE:PBH', 'TSE:PBI', 'TSE:PBL', 'TSE:PBU', 'TSE:PBY', 'TSE:PCD', 'TSE:PCF', 'TSE:PCY', 'TSE:PD', 'TSE:PDC', 'TSE:PDF', 'TSE:PDL', 'TSE:PDV', 'TSE:PEGI', 'TSE:PEU', 'TSE:PEY', 'TSE:PFB', 'TSE:PFD', 'TSE:PFH', 'TSE:PFL', 'TSE:PFT', 'TSE:PFU', 'TSE:PG', 'TSE:PGD', 'TSE:PGF', 'TSE:PGI', 'TSE:PGL', 'TSE:PGLC', 'TSE:PHE', 'TSE:PHR', 'TSE:PHW', 'TSE:PHX', 'TSE:PHYS', 'TSE:PIC', 'TSE:PID', 'TSE:PIF', 'TSE:PIH', 'TSE:PIN', 'TSE:PJC', 'TSE:PKI', 'TSE:PLC', 'TSE:PLI', 'TSE:PLS', 'TSE:PLV', 'TSE:PLZ', 'TSE:PMB', 'TSE:PME', 'TSE:PMM', 'TSE:PMN', 'TSE:PMT', 'TSE:PMTS', 'TSE:PNC', 'TSE:PNE', 'TSE:PNP', 'TSE:POM', 'TSE:PONY', 'TSE:POT', 'TSE:POU', 'TSE:POW', 'TSE:PPL', 'TSE:PPR', 'TSE:PPS', 'TSE:PR', 'TSE:PRA', 'TSE:PRF', 'TSE:PRK', 'TSE:PRP', 'TSE:PRQ', 'TSE:PRU', 'TSE:PRW', 'TSE:PSA', 'TSE:PSB', 'TSE:PSD', 'TSE:PSI', 'TSE:PSK', 'TSE:PSLV', 'TSE:PSU', 'TSE:PSY', 'TSE:PTB', 'TSE:PTG', 'TSE:PTM', 'TSE:PTS', 'TSE:PUB', 'TSE:PUD', 'TSE:PUR', 'TSE:PVG', 'TSE:PVS', 'TSE:PWF', 'TSE:PXC', 'TSE:PXG', 'TSE:PXS', 'TSE:PXT', 'TSE:PXU', 'TSE:PXX', 'TSE:PYF', 'TSE:PZA', 'TSE:PZC', 'TSE:PZW', 'TSE:QBR', 'TSE:QCD', 'TSE:QCP', 'TSE:QEC', 'TSE:QEM', 'TSE:QGE', 'TSE:QGL', 'TSE:QIE', 'TSE:QMA', 'TSE:QMG', 'TSE:QMV', 'TSE:QMY', 'TSE:QQC', 'TSE:QRD', 'TSE:QRH', 'TSE:QRI', 'TSE:QRM', 'TSE:QRT', 'TSE:QSP', 'TSE:QSR', 'TSE:QTRH', 'TSE:QUS', 'TSE:QXM', 'TSE:R', 'TSE:RAI', 'TSE:RAV', 'TSE:RAY', 'TSE:RBA', 'TSE:RBN', 'TSE:RBO', 'TSE:RBP', 'TSE:RCD', 'TSE:RCE', 'TSE:RCH', 'TSE:RCI', 'TSE:RCO', 'TSE:RDK', 'TSE:RDL', 'TSE:REAL', 'TSE:REF', 'TSE:REI', 'TSE:RET', 'TSE:RFP', 'TSE:RGRE', 'TSE:RGX', 'TSE:RIB', 'TSE:RIC', 'TSE:RID', 'TSE:RIDH', 'TSE:RIE', 'TSE:RIEH', 'TSE:RIG', 'TSE:RIGP', 'TSE:RIT', 'TSE:RKN', 'TSE:RLB', 'TSE:RLD', 'TSE:RLE', 'TSE:RME', 'TSE:RMP', 'TSE:RMX', 'TSE:RN', 'TSE:RNW', 'TSE:RNX', 'TSE:ROXG', 'TSE:RPD', 'TSE:RPDH', 'TSE:RPF', 'TSE:RPI', 'TSE:RQE', 'TSE:RQF', 'TSE:RQG', 'TSE:RQH', 'TSE:RQI', 'TSE:RQJ', 'TSE:RQK', 'TSE:RRX', 'TSE:RSI', 'TSE:RTG', 'TSE:RTU', 'TSE:RUD', 'TSE:RUDH', 'TSE:RUE', 'TSE:RUEH', 'TSE:RUS', 'TSE:RVX', 'TSE:RWC', 'TSE:RWE', 'TSE:RWU', 'TSE:RWW', 'TSE:RXD', 'TSE:RXE', 'TSE:RY', 'TSE:S', 'TSE:SAM', 'TSE:SAP', 'TSE:SAU', 'TSE:SBB', 'TSE:SBC', 'TSE:SBI', 'TSE:SBN', 'TSE:SBR', 'TSE:SBT', 'TSE:SCB', 'TSE:SCL', 'TSE:SCU', 'TSE:SCW', 'TSE:SCY', 'TSE:SDY', 'TSE:SEA', 'TSE:SEC', 'TSE:SEN', 'TSE:SES', 'TSE:SEV', 'TSE:SFD', 'TSE:SGF', 'TSE:SGQ', 'TSE:SGY', 'TSE:SHA', 'TSE:SHC', 'TSE:SHE', 'TSE:SHLE', 'TSE:SHOP', 'TSE:SHU', 'TSE:SHZ', 'TSE:SIA', 'TSE:SID', 'TSE:SII', 'TSE:SIN', 'TSE:SIS', 'TSE:SJ', 'TSE:SJR', 'TSE:SKG', 'TSE:SLF', 'TSE:SLR', 'TSE:SMC', 'TSE:SMF', 'TSE:SMT', 'TSE:SMU', 'TSE:SNC', 'TSE:SOLG', 'TSE:SOT', 'TSE:SOX', 'TSE:SOY', 'TSE:SPB', 'TSE:SPE', 'TSE:SPPP', 'TSE:SQP', 'TSE:SRHI', 'TSE:SRT', 'TSE:SRU', 'TSE:SRV', 'TSE:SSF', 'TSE:SSL', 'TSE:SSO', 'TSE:ST', 'TSE:STB', 'TSE:STEP', 'TSE:STN', 'TSE:STPL', 'TSE:SU', 'TSE:SUM', 'TSE:SVB', 'TSE:SVC', 'TSE:SVM', 'TSE:SVR', 'TSE:SW', 'TSE:SWY', 'TSE:SXI', 'TSE:SXP', 'TSE:T', 'TSE:TA', 'TSE:TAO', 'TSE:TBL', 'TSE:TC', 'TSE:TCL', 'TSE:TCN', 'TSE:TCS', 'TSE:TCT', 'TSE:TCW', 'TSE:TD', 'TSE:TDB', 'TSE:TDG', 'TSE:TECK', 'TSE:TEI', 'TSE:TEL', 'TSE:TET', 'TSE:TF', 'TSE:TFII', 'TSE:TGF', 'TSE:TGL', 'TSE:TGO', 'TSE:TGZ', 'TSE:TH', 'TSE:The', 'TSE:THO', 'TSE:THU', 'TSE:TIH', 'TSE:TKO', 'TSE:TLB', 'TSE:TLF', 'TSE:TLO', 'TSE:TLV', 'TSE:TMB', 'TSE:TMD', 'TSE:TMI', 'TSE:TML', 'TSE:TMQ', 'TSE:TMR', 'TSE:TNP', 'TSE:TNT', 'TSE:TNX', 'TSE:TOF', 'TSE:TOG', 'TSE:TOS', 'TSE:TOT', 'TSE:TOU', 'TSE:TOY', 'TSE:TPE', 'TSE:TPH', 'TSE:TPK', 'TSE:TPL', 'TSE:TPU', 'TSE:TPX', 'TSE:TRF', 'TSE:TRI', 'TSE:TRIL', 'TSE:TRL', 'TSE:TRP', 'TSE:TRQ', 'TSE:TRZ', 'TSE:TS', 'TSE:TSL', 'TSE:TSU', 'TSE:TTE', 'TSE:TTP', 'TSE:TUT', 'TSE:TV', 'TSE:TVA', 'TSE:TVE', 'TSE:TVK', 'TSE:TWC', 'TSE:TXF', 'TSE:TXG', 'TSE:TXP', 'TSE:TXT', 'TSE:TZS', 'TSE:TZZ', 'TSE:U', 'TSE:UCD', 'TSE:UDA', 'TSE:UEX', 'TSE:UFS', 'TSE:ULV', 'TSE:UNC', 'TSE:UNG', 'TSE:UNS', 'TSE:UR', 'TSE:URB', 'TSE:URE', 'TSE:US', 'TSE:USA', 'TSE:USB', 'TSE:USF', 'TSE:USH', 'TSE:UTC', 'TSE:UTE', 'TSE:UWE', 'TSE:UXM', 'TSE:VA', 'TSE:VAB', 'TSE:VAH', 'TSE:VB', 'TSE:VBG', 'TSE:VBU', 'TSE:VBV', 'TSE:VCB', 'TSE:VCE', 'TSE:VCM', 'TSE:VCN', 'TSE:VDU', 'TSE:VDY', 'TSE:VE', 'TSE:VEE', 'TSE:VEF', 'TSE:VEH', 'TSE:VET', 'TSE:VFF', 'TSE:VFV', 'TSE:VGG', 'TSE:VGH', 'TSE:VGV', 'TSE:VGZ', 'TSE:VI', 'TSE:VII', 'TSE:VIP', 'TSE:VIU', 'TSE:VLB', 'TSE:VLE', 'TSE:VLN', 'TSE:VLQ', 'TSE:VMO', 'TSE:VNP', 'TSE:VNR', 'TSE:VRE', 'TSE:VRX', 'TSE:VSB', 'TSE:VSC', 'TSE:VSG', 'TSE:VSN', 'TSE:VSP', 'TSE:VUN', 'TSE:VUS', 'TSE:VVL', 'TSE:VVO', 'TSE:VXC', 'TSE:VXM', 'TSE:VXS', 'TSE:W', 'TSE:WCN', 'TSE:WCP', 'TSE:WDO', 'TSE:WEED', 'TSE:WEF', 'TSE:WEQ', 'TSE:WFC', 'TSE:WFS', 'TSE:WFT', 'TSE:WG', 'TSE:WIR', 'TSE:WJA', 'TSE:WJX', 'TSE:WM', 'TSE:WN', 'TSE:WPK', 'TSE:WPM', 'TSE:WPRT', 'TSE:WRG', 'TSE:WRN', 'TSE:WRX', 'TSE:WSP', 'TSE:WTE', 'TSE:WXM', 'TSE:X', 'TSE:XAL', 'TSE:XAU', 'TSE:XAW', 'TSE:XBB', 'TSE:XBM', 'TSE:XBZ', 'TSE:XCB', 'TSE:XCD', 'TSE:XCG', 'TSE:XCH', 'TSE:XCR', 'TSE:XCS', 'TSE:XCT', 'TSE:XCV', 'TSE:XDC', 'TSE:XDG', 'TSE:XDGH', 'TSE:XDIV', 'TSE:XDU', 'TSE:XDUH', 'TSE:XDV', 'TSE:XEB', 'TSE:XEC', 'TSE:XEF', 'TSE:XEG', 'TSE:XEH', 'TSE:XEI', 'TSE:XEM', 'TSE:XEN', 'TSE:XEU', 'TSE:XFA', 'TSE:XFC', 'TSE:XFF', 'TSE:XFH', 'TSE:XFI', 'TSE:XFN', 'TSE:XFR', 'TSE:XFS', 'TSE:XGB', 'TSE:XGC', 'TSE:XGD', 'TSE:XGI', 'TSE:XGR', 'TSE:XHB', 'TSE:XHC', 'TSE:XHD', 'TSE:XHU', 'TSE:XHY', 'TSE:XIC', 'TSE:XID', 'TSE:XIG', 'TSE:XIN', 'TSE:XIT', 'TSE:XIU', 'TSE:XLB', 'TSE:XMA', 'TSE:XMC', 'TSE:XMD', 'TSE:XMF', 'TSE:XMH', 'TSE:XMI', 'TSE:XML', 'TSE:XMM', 'TSE:XMS', 'TSE:XMU', 'TSE:XMV', 'TSE:XMW', 'TSE:XMY', 'TSE:XPF', 'TSE:XQB', 'TSE:XQQ', 'TSE:XRB', 'TSE:XRC', 'TSE:XRE', 'TSE:XSB', 'TSE:XSC', 'TSE:XSE', 'TSE:XSH', 'TSE:XSI', 'TSE:XSP', 'TSE:XSQ', 'TSE:XST', 'TSE:XSU', 'TSE:XTC', 'TSE:XTD', 'TSE:XTG', 'TSE:XTR', 'TSE:XUH', 'TSE:XUS', 'TSE:XUT', 'TSE:XUU', 'TSE:XWD', 'TSE:XXM', 'TSE:XYM', 'TSE:Y', 'TSE:YCM', 'TSE:YGR', 'TSE:YPG', 'TSE:YRB', 'TSE:YRI', 'TSE:YXM', 'TSE:ZAG', 'TSE:ZAR', 'TSE:ZBK', 'TSE:ZCH', 'TSE:ZCL', 'TSE:ZCM', 'TSE:ZCN', 'TSE:ZCS', 'TSE:ZDB', 'TSE:ZDH', 'TSE:ZDI', 'TSE:ZDJ', 'TSE:ZDM', 'TSE:ZDV', 'TSE:ZDY', 'TSE:ZEA', 'TSE:ZEB', 'TSE:ZEF', 'TSE:ZEM', 'TSE:ZEO', 'TSE:ZEQ', 'TSE:ZFH', 'TSE:ZFL', 'TSE:ZFM', 'TSE:ZFS', 'TSE:ZGD', 'TSE:ZGI', 'TSE:ZGQ', 'TSE:ZHP', 'TSE:ZHY', 'TSE:ZIC', 'TSE:ZID', 'TSE:ZIN', 'TSE:ZJG', 'TSE:ZJN', 'TSE:ZJO', 'TSE:ZLB', 'TSE:ZLC', 'TSE:ZLD', 'TSE:ZLE', 'TSE:ZLH', 'TSE:ZLI', 'TSE:ZLU', 'TSE:ZMI', 'TSE:ZMP', 'TSE:ZMT', 'TSE:ZMU', 'TSE:ZPH', 'TSE:ZPL', 'TSE:ZPR', 'TSE:ZPS', 'TSE:ZPW', 'TSE:ZQQ', 'TSE:ZRE', 'TSE:ZRR', 'TSE:ZSP', 'TSE:ZST', 'TSE:ZSU', 'TSE:ZUB', 'TSE:ZUD', 'TSE:ZUE', 'TSE:ZUH', 'TSE:ZUP', 'TSE:ZUQ', 'TSE:ZUT', 'TSE:ZWA', 'TSE:ZWB', 'TSE:ZWC', 'TSE:ZWE', 'TSE:ZWH', 'TSE:ZWU', 'TSE:ZXM', 'TSE:ZYME', 'TSE:ZZZ']
+listOfStocks = []
+
+class Stock():
+    def __init__(self,symbol,price,dividendYield,dividendPerShare,earningsPerShare,PERatio,marketCap):
+        self.symbol = symbol
+        self.price = price
+        self.dividendYield = dividendYield
+        self.dividendPerShare = dividendPerShare
+        self.earningsPerShare = earningsPerShare
+        self.marketCap = marketCap
+        try:
+            self.payoutRatio = round((((self.dividendYield/100)*self.price)/self.earningsPerShare)*10000)/100
+        except:
+            self.payoutRatio = "N/A"
+        self.PERatio = PERatio
+    def Display(self):
+        print ""
+        print "Symbol:",self.symbol
+        print "Price: $",self.price
+        print "Yield:",self.dividendYield,"%"
+        print "Dividend Per Share:",self.dividendPerShare
+        print "Earnings Per Share:",self.earningsPerShare
+        print "Payout Ratio:",self.payoutRatio,"%"
+        print "P/E:",self.PERatio
+        print "Market Cap:",self.marketCap
+        print "Website: https://www.google.com/finance?q=" + self.symbol
+
+def DownloadData(url):
+    html = urllib.urlopen(url)
+    html = html.readlines()
+    return html
+
+def FindPatternInData(pattern,data):
+    listOfValues = []
+    for l in data:
+        val = ""
+        for i in range(len(l)):
+            if i >= len(pattern):
+                val += l[i]
+            elif i < len(pattern) and l[i] != pattern[i]:
+                break
+        if val != "":
+            listOfValues.append(val[:-1])
+    return listOfValues
+
+def CreateStockClass(symbol, values):
+    try:
+        price = float(values[0].split(" - ")[1])
+    except:
+        price = "N/A"
+    try:
+        dividendYield = float(values[6].split("/")[1])
+    except:
+        dividendYield = "N/A"
+    try:
+        dividendPerShare = float(values[6].split("/")[0])
+    except:
+        dividendPerShare = "N/A"
+    try:
+        earningsPerShare = float(values[7])
+    except:
+        earningsPerShare = "N/A"
+    try:
+        PERatio = float(values[5])
+    except:
+        PERatio = "N/A"
+    try:
+        marketCap = values[4]
+    except:
+        marketCap = "N/A"
+
+    temp = Stock(symbol,price,dividendYield,dividendPerShare,earningsPerShare,PERatio,marketCap)
+    return temp
+
+i = 0
+for t in tickers:
+    i += 1
+    print "Downloading... " + t
+    print "[" + str(i) + "/" + str(len(tickers)) + "]"
+    s = CreateStockClass(t,FindPatternInData('<td class="val">',DownloadData("https://www.google.com/finance?q=" + t)))
+    listOfStocks.append(s)
+
+j = 0
+valuableStocks = []
+for s in listOfStocks:
+    if s.dividendYield >= 4 and s.earningsPerShare > 0 and s.PERatio > 10 and s.PERatio < 25 and s.payoutRatio < 100 and s.marketCap[len(s.marketCap)-1:] == "B":
+        j += 1
+        valuableStocks.append(s.symbol)
+        s.Display()
+        webbrowser.open("https://www.google.com/finance?q=" + s.symbol)
+
+print ""
+print str(j),"results.\n"
+print valuableStocks

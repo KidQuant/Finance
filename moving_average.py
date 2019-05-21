@@ -17,11 +17,19 @@ end_date = '2016-12-31'
 
 yf.pdr_override()
 
-panel_data = pdr.get_data_yahoo('INPX', start_date, end_date)
+panel_data = pdr.get_data_yahoo('AAPL', start_date, end_date)
 
 panel_data
 
-inpx = panel_data['Adj Close']
+aapl = panel_data['Adj Close']
 
-short_rolling_inpx = inpx.rolling(window =20).mean()
-long_rolling_inpx = inpx.
+short_rolling_aapl = aapl.rolling(window =20).mean()
+long_rolling_aapl = aapl.rolling(window = 100).mean()
+
+fig, ax = plt.subplots(figsize = (16,9))
+ax.plot(aapl.index, aapl, label = 'AAPL' )
+ax.plot(short_rolling_aapl.index, short_rolling_aapl, label = '20 day rolling')
+ax.plot(long_rolling_aapl.index, long_rolling_aapl, label = '100 day rolling')
+ax.set_xlabel('Date')
+ax.set_ylabel('Adjust closing price ($)')
+ax.legend()
