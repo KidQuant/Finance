@@ -403,7 +403,7 @@ def load_data(filename, seq_len, normalise_window):
         result.append(data[index: index + sequence_length])
 
     if normalise_window:
-        result = normalise_windows(result)
+        result = normalise_window(result)
 
     result = np.array(result)
 
