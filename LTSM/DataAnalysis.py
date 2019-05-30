@@ -376,7 +376,7 @@ print("Variance of return:{:.4f} %".format(varianceOfReturn(endDatePrice,actual,
 #SVR is used next
 print("******* SVR *******")
 sp.trainSVR()
-predicted = sp.predictsSVR()
+predicted = sp.predictSVR()
 print("Actual:", actual, "Predicted by SVR", predicted)
 print("Percent Difference:{:.4f} %".format(abs((actual-predicted)/actual)*100.0))
 print("Variance of return:{:.4f} %".format(endDate,actual,predicted))
@@ -441,8 +441,7 @@ def build_model(layers):
         return_sequences = False))
     model.add(Dropout(0.2))
 
-    model.add(Dense(
-        output_dim layers[3]))
+    model.add(Dense(output_dim layers[3]))
     model.add(Activation("linear"))
 
     start = time.time()
