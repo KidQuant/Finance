@@ -402,7 +402,7 @@ warnings.filterwarnings('ignore') #Hide messy Numpy warnings
 
 def load_data(filename, seq_len, normalise_window):
     f = open(filename, 'rb').read()
-    data = f.decode().split('\n')
+    data = f.decode().split(',')
 
     sequence_length = seq_len + 1
     result = []
@@ -513,11 +513,7 @@ seq_len = 50
 
 print('> Loading data... ')
 
-<<<<<<< HEAD
 X_train, y_train, X_test, y_test = load_data('stock_dfs/GOOG.csv', seq_len, True)
-=======
-X_train, y_train, X_test, y_test = load_data('stock_dfs/Google.csv', seq_len, True)
->>>>>>> dfd776f91b57559f1228620e64570f9656540666
 
 print('> Data Loaded. Compiling...')
 
