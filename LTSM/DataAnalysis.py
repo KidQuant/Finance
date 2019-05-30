@@ -53,7 +53,9 @@ save_sp500_tickers()
 start = dt.datetime(2015,1,1)
 end = dt.datetime.now()
 
-pdr.get_data_yahoo('TSLA', start, end)
+data = pdr.get_data_yahoo('TSLA', start, end)
+
+data.iloc[0:, 0:]
 
 def get_data_from_yahoo(reload_sp500=False):
     if reload_sp500:
@@ -171,9 +173,9 @@ if reloadData:
     # save as CSV to stop blowing up their API
     data.to_csv(fileName)
     # save then reload as the qandl date doesn't load right in Pandas
-    data = pd.read_csv(fileName)
+    data = pd.read_csv(fileName, index_col = 'Date')
 else:
-    data = pd.read_csv(fileName)
+    data = pd.read_csv(fileName, index_col = 'Date')
 
 #fetch the actual price so that we can compare with what was predicted
 actual = data[metric][data['Date'] == queryDate].values[0]
