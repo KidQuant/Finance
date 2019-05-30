@@ -13,7 +13,7 @@ from sklearn.metrics import r2_score
 
 startDate = '2004-08-19'
 endDate = '2017-03-01'
-queryDate = '2017-02-07'
+queryDate = '2019-09-07'
 tickerSymbol = 'GOOG'
 metric = 'Adj Close'
 fileName = 'stock_dfs/GOOG.csv'
@@ -30,7 +30,7 @@ class StockPredictor:
         self.tickerSymbol = ''
 
     #LoadData call queries the API, caching if necessary
-    def loadData(self, tickerSymbol, startDate, endDate, reloadData=False, fileName='stockData.csv'):
+    def loadData(self, tickerSymbol, startDate, endDate, reloadData=False, fileName='stock_dfs/stockData.csv'):
 
         self.tickerSymbol = tickerSymbol
         self.startDate = startDate
@@ -38,7 +38,7 @@ class StockPredictor:
 
         if reloadData:
             #get data from yahoo finance fo tickerSymbol
-            data = pd.DataFrame(yahoo.Share(tickerSymbol).get_historical(startDate, endDate))
+            data = pdr.get_data_yahoo(tickerSymbol, startDate, endDate)
 
             # save as CSV to stop blowing up their API
             data.to_csv(fileName)
@@ -64,7 +64,7 @@ class StockPredictor:
     #sequence length is a tuning parameter - this is the length of the sequence that will be trained on.
     # Too long and too short and the algorithms won't be able to find any trend - set as 5 days
     # by default, and this works pretty well
-    def prepareData(self, predictDate, metric = 'Adj_Close', sequenceLength=5):
+    def prepareData(self, predictDate, metric = 'Adj Close', sequenceLength=5):
 
         # number of days to predict ahead
         predictDate = dt.datetime.strptime(predictDate, "%Y-%m-%d")
