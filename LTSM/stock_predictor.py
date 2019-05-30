@@ -11,6 +11,13 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
+startDate = '2004-08-19'
+endDate = '2017-03-01'
+queryDate = '2017-02-07'
+tickerSymbol = 'GOOG'
+metric = 'Adj Close'
+fileName = 'stock_dfs/GOOG.csv'
+
 # Show matplotlib plots inline (nicely formatted in the notebook)
 import matplotlib.pyplot as plt
 
