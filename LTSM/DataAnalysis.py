@@ -9,6 +9,7 @@ import os
 import pickle
 import bs4 as bs
 from pandas.plotting import scatter_matrix
+import datetime as dt
 
 yf.pdr_override()
 
