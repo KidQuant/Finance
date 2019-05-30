@@ -398,12 +398,12 @@ def load_data(filename, seq_len, normalise_window):
     data = f.decode().split('\n')
 
     sequence_length = seq_len + 1
-    results = []
+    result = []
     for index in range(len(data) - sequence_length):
         result.append(data[index: index + sequence_length])
 
     if normalise_window:
-        result = normalise_window(result)
+        result = normalise_windows(result)
 
     result = np.array(result)
 
@@ -500,4 +500,27 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
         plt.legend()
     plt.savefig('multipleResults.jpg')
     plt.show()
-    
+
+epochs = 1
+seq_len = 50
+
+print('> Londing data...')
+
+X_train, y_train, X_test, y_test = load_data('stock_dfs/GOOG.csv', seq_len, True)
+
+print('> Data Loaded. Compiling...')
+
+model = build_model([1, 50, 100, 1])
+
+model.fit(
+    X_train,
+    y_train,
+    batch_size=512,
+    nb_epoch=epochs,
+    validation_split=0.05)
+
+predicted = predict_point_by_point(model, X_test)
+plot_results(predicted, y_test)
+
+predictions = predict_sequences_multiple(model, X_test, seq_len, 50)
+plot_results_multiple(predictions, y_test, 50)
