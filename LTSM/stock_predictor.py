@@ -168,3 +168,19 @@ class StockPredictor:
         inputSeq = pd.DataFrame(inputSeq)
         predicted = self.model.predict(inputSeq)[0]
         return predicted
+
+#Linear Regression first
+print("******* Linear Regression *******")
+sp.trainLinearRegression()
+predicted = sp.predictLinearRegression()
+print("Actual:", actual, "Predicted by Linear Regression", predicted)
+print("Percent Difference:{:.4f} %".format(abs((actual-predicted)/actual)*100.0))
+print("Variance of return:{:.4f} %".format(varianceOfReturn(endDatePrice,actual,predicted)))
+
+#SVR is used next
+print("******* SVR *******")
+sp.trainSVR()
+predicted = sp.predictsSVR()
+print("Actual:", actual, "Predicted by SVR", predicted)
+print("Percent Difference:{:.4f} %".format(abs((actual-predicted)/actual)*100.0))
+print("Variance of return:{:.4f} %".format(endDate,actual,predicted))
