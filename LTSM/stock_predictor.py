@@ -39,7 +39,7 @@ def varianceOfReturn(endPrice, actualPrice, predictedPrice):
 from keras.layers import Dense, LSTM, Activation, Dropout, Flatten
 
 startDate = '2004-08-19'
-endDate = '2017-03-01'
+endDate = '2019-05-30'
 queryDate = '2019-09-07'
 tickerSymbol = 'GOOG'
 metric = 'Adj Close'
@@ -94,8 +94,8 @@ class StockPredictor:
     def prepareData(self, predictDate, metric = 'Adj Close', sequenceLength=5):
 
         # number of days to predict ahead
-        predictDate = dt.datetime.strptime(predictDate, "%Y-%m-%d")
-        endDate = dt.datetime.strptime(self.endDate, "%Y-%m-%d")
+        predictDate = predictDate
+        endDate = self.endDate
 
         #this pandas gets the number of business days ahead, within reason ( i.e. doesn't know about local market
         #public holidays, etc)
