@@ -1,7 +1,3 @@
-import datetime as dt
-import pandas as pd
-import numpy as np
-import yfinance as yf
 
 fileName = "LTSM/backTest.csv"
 ticker = 'ALGN'
