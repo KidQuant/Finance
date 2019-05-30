@@ -1,18 +1,10 @@
-from keras.layers import Dense, LSTM, Activation, Dropout, Flatten
-from keras.models import Sequential
-
-from sklearn import svm, metrics, preprocessing
 import datetime as dt
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from sklearn.model_selection import train_test_split, ShuffleSplit
-from sklearn.model_selection import GridSearchCV
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
 
 fileName = "LTSM/backTest.csv"
-ticker = 'GOOG'
+ticker = 'ALGN'
 start = dt.datetime(2013, 1, 1)
 end = dt.datetime.now()
 
@@ -37,9 +29,16 @@ def varianceOfReturn(endPrice, actualPrice, predictedPrice):
     return (p1/t1) * 100.0
 
 from keras.layers import Dense, LSTM, Activation, Dropout, Flatten
+from keras.layers import Dense, LSTM, Activation, Dropout, Flatten
+from keras.models import Sequential
+from sklearn import svm, metrics, preprocessing
+from sklearn.model_selection import train_test_split, ShuffleSplit
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 startDate = '2004-08-19'
-endDate = '2019-05-30'
+endDate = '2017-03-01'
 queryDate = '2019-09-07'
 tickerSymbol = 'GOOG'
 metric = 'Adj Close'
@@ -94,8 +93,8 @@ class StockPredictor:
     def prepareData(self, predictDate, metric = 'Adj Close', sequenceLength=5):
 
         # number of days to predict ahead
-        predictDate = predictDate
-        endDate = self.endDate
+        predictDate = dt.datetime.strptime(predictDate, "%Y-%m-%d")
+        endDate = dt.datetime.strptime(self.endDate, "%Y-%m-%d")
 
         #this pandas gets the number of business days ahead, within reason ( i.e. doesn't know about local market
         #public holidays, etc)
