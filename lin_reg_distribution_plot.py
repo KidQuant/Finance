@@ -11,17 +11,28 @@ from scipy.stats import norm
 
 #%%
 
+<<<<<<< HEAD
 if __name__ == "__main__":
 
+=======
+if __name__ == "__main__" :
+>>>>>>> 05a79d44c8b519276b4743330866a1ef3aacf6bc
     # Set up the X and Y dimensions
     fig = plt.figure()
     ax = Axes3D(fig)
     X = np.arange(0,20,0.25)
     Y = np.arange(-10,10,0.25)
+<<<<<<< HEAD
     X, Y = np.meshgrid
 
     # Create the univarate normal coefficients
     # of intercept and slope, as well as the 
+=======
+    X, Y = np.meshgrid(X,Y)
+
+    # Create the univarate normal coefficients
+    # of intercept and slope, as well as the
+>>>>>>> 05a79d44c8b519276b4743330866a1ef3aacf6bc
     # conditional probability density
     beta0 = -5.0
     beta1 = 0.5
@@ -49,4 +60,8 @@ if __name__ == "__main__":
     ax.invert_yaxis()
 
     #Plot the probability density
+<<<<<<< HEAD
     plt.show()
+=======
+    plt.show()
+>>>>>>> 05a79d44c8b519276b4743330866a1ef3aacf6bc
