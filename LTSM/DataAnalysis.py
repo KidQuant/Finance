@@ -175,3 +175,10 @@ actual = data[metric][data['Date'] == queryDate].values[0]
 print("Actual price at date of query", actual)
 #the endDatePrice is the price at the end of the data - used for comparison
 endDatePrice = data[metric][data['Date'] == endDate].values[0]
+
+def varianceOfReturn(endPrice, actualPrice, predictedPrice):
+    t1 = abs(actualPrice - endPrice)
+    p1 = abs(predictedprice - actualPrice)
+    return (p1/t1) * 100.0
+
+from keras.layers import Dense, LSTM, Activation, Dropout, Flatten
