@@ -403,7 +403,7 @@ def load_data(filename, seq_len, normalise_window):
         result.append(data[index: index + sequence_length])
 
     if normalise_window:
-        result = normalise_window(result)
+        result = normalise_windows(result)
 
     result = np.array(result)
 
@@ -420,12 +420,12 @@ def load_data(filename, seq_len, normalise_window):
 
     return [x_train, y_train, x_test, y_test]
 
-def normalise_window(window_data):
-    normalise_data = []
+def normalise_windows(window_data):
+    normalised_data = []
     for window in window_data:
-        normalise_window = [((float(p) / float(window[0])) - 1) for p in window]
-        normalise_data.append(normalise_window)
-    return normalise_data
+        normalised_window = [((float(p) / float(window[0])) - 1) for p in window]
+        normalised_data.append(normalised_window)
+    return normalised_data
 
 def build_model(layers):
     model = Sequential()
@@ -463,11 +463,11 @@ def predict_sequence_full(model, data, window_size):
     predicted = []
     for i in range(len(data)):
         predicted.append(model.predict(curr_frame[newaxis,:,:])[0,0])
-        curr_frame =curr_frame[1:]
+        curr_frame = curr_frame[1:]
         curr_frame = np.insert(curr_frame, [window_size-1], predicted[-1], axis=0)
     return predicted
 
-def predict_sequence_multiple(model, data, window_size, prediction_len):
+def predict_sequences_multiple(model, data, window_size, prediction_len):
     #Predict sequence of 50 steps before shifting prediction run forward by 50 steps
     prediction_seqs = []
     for i in range(int(len(data)/prediction_len)):
@@ -484,29 +484,29 @@ def plot_results(predicted_data, true_data):
     fig = plt.figure(facecolor='white')
     ax = fig.add_subplot(111)
     ax.plot(true_data, label='True Data')
-    plt.plot(predicted_data, label = 'Prediction')
+    plt.plot(predicted_data, label='Prediction')
     plt.legend()
-    plt.savefig('results.jpg', bbox_inches = 'tight')
+    plt.savefig('results.jpg')
     plt.show()
 
 def plot_results_multiple(predicted_data, true_data, prediction_len):
     fig = plt.figure(facecolor='white')
     ax = fig.add_subplot(111)
-    ax.plot(true_data, label = 'True Data')
-    #Pad the list of predictions shift it in the graph to it's correct start
+    ax.plot(true_data, label='True Data')
+    #Pad the list of predictions to shift it in the graph to it's correct start
     for i, data in enumerate(predicted_data):
         padding = [None for p in range(i * prediction_len)]
-        plt.plot(padding + data, label = 'Prediction')
+        plt.plot(padding + data, label='Prediction')
         plt.legend()
     plt.savefig('multipleResults.jpg')
     plt.show()
 
-epochs = 1
+epochs  = 1
 seq_len = 50
 
-print('> Londing data...')
+print('> Loading data... ')
 
-X_train, y_train, X_test, y_test = load_data('stock_dfs/GOOG.csv', seq_len, True)
+X_train, y_train, X_test, y_test = load_data('./data/Google.csv', seq_len, True)
 
 print('> Data Loaded. Compiling...')
 
