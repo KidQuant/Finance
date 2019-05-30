@@ -11,6 +11,33 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
+fileName = "LTSM/backTest.csv"
+ticker = 'GOOG'
+start = dt.datetime(2013, 1, 1)
+end = dt.datetime.now()
+
+if reloadData:
+    data  = pdr.get_data_yahoo(ticker, start, end)
+    # save as CSV to stop blowing up their API
+    data.to_csv(fileName)
+    # save then reload as the qandl date doesn't load right in Pandas
+    data = pd.read_csv(fileName)
+else:
+    data = pd.read_csv(fileName)
+
+#fetch the actual price so that we can compare with what was predicted
+actual = data[metric][data['Date'] == queryDate].values[0]
+print("Actual price at date of query", actual)
+#the endDatePrice is the price at the end of the data - used for comparison
+endDatePrice = data[metric][data['Date'] == endDate].values[0]
+
+def varianceOfReturn(endPrice, actualPrice, predictedPrice):
+    t1 = abs(actualPrice - endPrice)
+    p1 = abs(predictedprice - actualPrice)
+    return (p1/t1) * 100.0
+
+from keras.layers import Dense, LSTM, Activation, Dropout, Flatten
+
 startDate = '2004-08-19'
 endDate = '2017-03-01'
 queryDate = '2019-09-07'
