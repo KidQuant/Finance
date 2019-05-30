@@ -169,6 +169,17 @@ class StockPredictor:
         predicted = self.model.predict(inputSeq)[0]
         return predicted
 
+# create new stock predictor. Argment as placeholder for future expansion
+sp = StockPredictor()
+
+# Load data will query the Quandl API with the paramters
+sp.loadData(tickerSymbol, startDate, endDate, reloadData=False, fileName=fileName)
+
+# sp.setData(data, ticker startDate, endDate)
+#preparedata does the preprocessing
+sp.prepareData(queryDate, metric=metric, sequenceLength=5)
+
+
 #Linear Regression first
 print("******* Linear Regression *******")
 sp.trainLinearRegression()
