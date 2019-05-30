@@ -50,6 +50,11 @@ def save_sp500_tickers():
 
 save_sp500_tickers()
 
+start = dt.datetime(2015,1,1)
+end = dt.datetime.now()
+
+pdr.get_data_yahoo('TSLA', start, end)
+
 def get_data_from_yahoo(reload_sp500=False):
     if reload_sp500:
         tickers = save_sp500_tickers()
@@ -506,7 +511,7 @@ seq_len = 50
 
 print('> Loading data... ')
 
-X_train, y_train, X_test, y_test = load_data('./data/Google.csv', seq_len, True)
+X_train, y_train, X_test, y_test = load_data('stock_dfs/Google.csv', seq_len, True)
 
 print('> Data Loaded. Compiling...')
 
