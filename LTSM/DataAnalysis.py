@@ -506,7 +506,7 @@ seq_len = 50
 
 print('> Loading data... ')
 
-X_train, y_train, X_test, y_test = load_data('./data/Google.csv', seq_len, True)
+X_train, y_train, X_test, y_test = load_data('stock_dfs/GOOG.csv', seq_len, True)
 
 print('> Data Loaded. Compiling...')
 
