@@ -174,7 +174,7 @@ def visualize_statistic(statistic, title, limit = 0):
   for i, v in enumerate(statistic):
       ax.text( i - 0.22,v + 0.01 , str(round(v,3)), color = 'blue', fontweight='bold')
   plt.xticks(np.arange(len(statistic)), instruments)
-  plt.title(r"{}for every instrument (i) against market (m) S&P500".format(title))
+  plt.title(r"{} for every instrument (i) against market (m) S&P500".format(title))
   plt.xlabel(r"Instrument")
   plt.ylabel(r"{} value".format(title))
   plt.show()
@@ -223,3 +223,232 @@ STD_avg_total = STD_total.mean()
 STD_avg_market = STD_avg_total['^GSPC']
 
 pd.DataFrame(APR_avg_total, columns = ['Average APR']).T
+
+# Calculate correlation ρ & R squared R^2 between all instruments (i) & market (m)
+corr = log_returns.corrwith(market_log_returns)
+r_squared = corr ** 2
+
+pd.DataFrame(r_squared, columns = ["R squared"]).T
+
+############################################################
+##          Expanded Capital Asset Pricing Model          ##
+## ______________________________________________________ ##
+##       E[R] - R_f  = α + β * (E[R_M] - R_f) + 𝜖         ##
+##                                                        ##
+##       INPUT :  [*] E[R] = log returns, σ = STD         ##
+##       OUTPUT : [*] α,β                                 ##
+############################################################
+
+def CAPM():
+    # 1 - Calculate average Risk Premium for every instrument
+    # [*]  _
+    #     E[R] - R_f
+    # [*]   __
+    #     E[R_m] - R_f
+    APR_premium = APR_avg - risk_free
+    APR_market_premium = APR_avg_market - risk_free
+
+    # 2 - Calculate α, β
+    beta = corr * STD_avg / STD_avg_market
+    alpha = APR_premium - beta * APR_market_premium
+
+    return alpha, beta
+
+alpha, beta = CAPM()
+
+pd.DataFrame(alpha, columns = ["Average α"]).T
+
+visualize_statistic(alpha.values, "Alpha α")
+
+pd.DataFrame(beta, columns = ["Average β"]).T
+
+visualize_statistic(beta.values, "Beta β", limit = 1)
+
+visualize_model(alpha/100, beta, data= log_return_total.copy(), model = 'CAPM')
+
+beta_reg, alpha_reg = np.polyfit(x = log_returns_total['^GSPC'], y = log_returns_total[log_returns.columns], deg=1)
+
+pd.DataFrame(alpha_reg, index = log_returns.columns, columns = ["Average α"]).T
+
+pd.DataFrame(beta_reg, index = log_returns.columns, columns = ["Average β"]).T
+
+visualize_statistic(beta.values, "Beta β", limit = 1)
+
+visualize_model(alpha/100, beta, data = log_returns_total.copy(), model = 'CAPM')
+
+beta_reg, alpha_reg = np.polyfit(x = log_returns_total['^GSPC'], y = log_returns_total[log_returns.columns], deg = 1)
+
+pd.DataFrame(alpha_reg, index = log_returns.columns, columns = ["Average α"]).T
+
+pd.DataFrame(beta_reg, index = log_returns.columns, columns = ["Average β"]).T
+
+visualize_statistic(beta_reg, "Beta β", limit = 1)
+
+visualize_model(alpha_reg, beta_reg, data = log_returns_total.copy(), model = 'OLS')
+
+portfolios = {"#1 dummy (risky)" : {"Return E[R]" : 0, "Risk σ" : 0, "Sharpe Ratio SR" : 0},
+              "#1 dummy (total)" : {"Return E[R]" : 0, "Risk σ" : 0, "Sharpe Ratio SR" : 0},
+              "#2 optimized max sr (risky)" : {"Return E[R]" : 0, "Risk σ" : 0, "Sharpe Ratio SR" : 0},
+              "#2 optimized max sr (total)" : {"Return E[R]" : 0, "Risk σ" : 0, "Sharpe Ratio SR" : 0},
+              "#2 optimized min σ (risky)" : {"Return E[R]" : 0, "Risk σ" : 0, "Sharpe Ratio SR" : 0},
+              "#2 optimized min σ (total)" : {"Return E[R]" : 0, "Risk σ" : 0, "Sharpe Ratio SR" : 0},
+              }
+
+# WEIGHTS, RETURN, RISK
+cov = APR.cov()
+weights = np.array([ 0.45/ 7] * 7 + [ 0.35 / 2] * 2 + [ 0.1 / 2] * 2)
+expected_return = np.sum(APR_avg * weights)
+expected_risk   = np.sqrt( np.dot(weights.T , np.dot(cov, weights)) )
+
+# RISKY PORTFOLIO
+portfolios["#1 dummy (risky)"]["Return E[R]"]     = expected_return
+portfolios["#1 dummy (risky)"]["Risk σ"]          = expected_risk
+portfolios["#1 dummy (risky)"]["Sharpe Ratio SR"] = (expected_return - risk_free) / expected_risk
+
+# TOTAL PORTFOLIO
+total_expected_return = 0.9 * expected_return + 0.1 * risk_free
+total_expected_risk   = 0.9 * expected_risk
+portfolios["#1 dummy (total)"]["Return E[R]"]     = total_expected_return
+portfolios["#1 dummy (total)"]["Risk σ"]          = total_expected_risk
+portfolios["#1 dummy (total)"]["Sharpe Ratio SR"] = (total_expected_return - risk_free) / total_expected_risk
+
+portfolios_df = pd.DataFrame(portfolios).T
+portfolios_df
+
+num_portfolios = 10000
+generated_portfolios = []
+
+for idx in range(num_portfolios):
+	#1 - select random weights for portfolio holdings & rebalance weights sum to 1
+	weights = np.array(np.random.random(11))
+	weights /= np.sum(weights)
+
+	#2 calculate return, risk, sharpe ratio
+	expected_return = np.sum(APR_avg * weights)
+	expected_risk = np.sqrt(np.dot(weights.T, np.dot(cov, weights)))
+	sharpe_ratio = (expected_return - risk_free) / expected_risk
+
+	#3 - store the results
+	generated_portfolios.append([expected_return, expected_risk, sharpe_ratio, weights])
+
+# Locate the 2 'special' portfolios 1) maximum sharpe ratio 2) minimum risk
+maximum_sr_portfolio = sorted(generated_portfolios, key = lambda x: -x[2])[0]
+minimum_risk_portfolio = sorted(generated_portfolios, key = lambda x: x[1])[0]
+max_sr = maximum_sr_portfolio[2]
+
+max_sr_weights = pd.DataFrame(maximum_sr_portfolio[3], index = log_returns.columns, columns = ["Optimal Weights  #2 optimized max sr "]).T
+min_risk_weights = pd.DataFrame(minimum_risk_portfolio[3], index = log_returns.columns, columns = ["Optimal Weights  #2 optimized min σ "]).T
+
+
+max_sr_weights
+min_risk_weights
+
+# RISKY PORTFOLIOS
+portfolios["#2 optimized max sr (risky)"]["Return E[R]"]     = maximum_sr_portfolio[0]
+portfolios["#2 optimized max sr (risky)"]["Risk σ"]          = maximum_sr_portfolio[1]
+portfolios["#2 optimized max sr (risky)"]["Sharpe Ratio SR"] = (maximum_sr_portfolio[0] - risk_free) / maximum_sr_portfolio[1]
+portfolios["#2 optimized min σ (risky)"]["Return E[R]"]      = minimum_risk_portfolio[0]
+portfolios["#2 optimized min σ (risky)"]["Risk σ"]           = minimum_risk_portfolio[1]
+portfolios["#2 optimized min σ (risky)"]["Sharpe Ratio SR"]  = (minimum_risk_portfolio[0] - risk_free) / minimum_risk_portfolio[1]
+
+# TOTAL PORTFOLIOS
+total_expected_return = 0.9 * maximum_sr_portfolio[0] + 0.1 * risk_free
+total_expected_risk   = 0.9 * maximum_sr_portfolio[1]
+portfolios["#2 optimized max sr (total)"]["Return E[R]"]     = total_expected_return
+portfolios["#2 optimized max sr (total)"]["Risk σ"]          = total_expected_risk
+portfolios["#2 optimized max sr (total)"]["Sharpe Ratio SR"] = (total_expected_return - risk_free) / total_expected_risk
+total_expected_return = 0.9 * minimum_risk_portfolio[0] + 0.1 * risk_free
+total_expected_risk   = 0.9 * minimum_risk_portfolio[1]
+portfolios["#2 optimized min σ (total)"]["Return E[R]"]      = total_expected_return
+portfolios["#2 optimized min σ (total)"]["Risk σ"]           = total_expected_risk
+portfolios["#2 optimized min σ (total)"]["Sharpe Ratio SR"]  = (total_expected_return - risk_free) / total_expected_risk
+
+portfolio_df = pd.DataFrame(portfolios).T
+portfolio_df
+
+# plot the 2 optimized portfolios along with the rest 9998
+def plot_simulation(CAL = None, INSTRUMENTS = None) :
+    fig, ax = plt.subplots(figsize = (18,12))
+    ax.set_facecolor((0.95, 0.95, 0.99))
+    ax.grid(c = (0.75, 0.75, 0.99))
+    # portfolio #1
+    ret  = portfolios["#1 dummy (risky)"]["Return E[R]"]
+    risk = portfolios["#1 dummy (risky)"]["Risk σ"]
+    sr   = (ret - risk_free) / risk
+    ax.scatter(risk, ret, marker = (5,1,0),color = 'y',s = 700, label = 'portfolio #1 (dummy)')
+    ax.annotate(round(sr, 2), (risk - 0.006,ret + 0.013), fontsize = 20, color = 'black')
+    # portfolio #2
+    ret, risk, sr = [x[0] for x in generated_portfolios], [x[1] for x in generated_portfolios], [x[2] for x in generated_portfolios]
+    ax.scatter(risk, ret, c = sr, cmap = 'viridis', marker = 'o', s = 10, alpha = 0.5)
+    ax.scatter(maximum_sr_portfolio[1], maximum_sr_portfolio[0],marker = (5,1,0),color = 'r',s = 700, label = 'portfolio #2 (max sr)')
+    ax.annotate(round(maximum_sr_portfolio[2], 2), (maximum_sr_portfolio[1]  - 0.006,maximum_sr_portfolio[0] + 0.013), fontsize = 20, color = 'black')
+    ax.scatter(minimum_risk_portfolio[1], minimum_risk_portfolio[0], marker = (5,1,0), color = 'g',s = 700,  label = 'portfolio # (min risk)')
+    ax.annotate(round(minimum_risk_portfolio[2], 2), (minimum_risk_portfolio[1]  - 0.006,minimum_risk_portfolio[0] + 0.013), fontsize = 20, color = 'black')
+    # CAL?
+    if CAL :
+        ax.plot(CAL[0], CAL[1], linestyle = '-', color = 'red', label = 'CAL')
+    if INSTRUMENTS :
+        ax.scatter(STD_avg, APR_avg, s = s , c = c , cmap = "Blues", alpha = 0.4, edgecolors = "grey", linewidth = 2)
+        for idx, instr in enumerate(list(STD.columns)):
+            sr = round((APR_avg[idx] - risk_free) / STD_avg[idx] , 2)
+            ax.annotate(instr, (STD_avg[idx] + 0.01, APR_avg[idx]))
+            ax.annotate(sr, (STD_avg[idx] - 0.005 , APR_avg[idx] + 0.015))
+    ax.set_title('10000 SIMULATED PORTFOLIOS')
+    ax.set_xlabel('Annualized Risk (σ)')
+    ax.set_ylabel('Annualized Returns (APR_avg)')
+    ax.legend(labelspacing = 1.2)
+
+plot_simulation()
+
+##################################################################
+#						            E[R_optimal] - R_rf 				             #
+#			E[R_p] = R_rf + ---------------------- σ_p 			           #
+#									           σ_optimal				                   #
+#							        |                     |                    #
+#                     |_____________________|                    #
+#                            SR_optimal                          #
+##################################################################
+cal_x  = np.linspace(0.0, 0.3, 50)
+cal_y = risk_free + cal_x * max_sr
+
+plot_simulation(CAL = [cal_x, cal_y] , INSTRUMENTS = 'yes')
+
+A = np.linspace(0, 10, 10)
+utility_dummy    = portfolios["#1 dummy (total)"]["Return E[R]"] - 1/2 * A * portfolios["#1 dummy (total)"]["Risk σ"] ** 2
+utility_max_sr   = portfolios["#2 optimized max sr (total)"]["Return E[R]"] - 1/2 * A * portfolios["#2 optimized max sr (total)"]["Risk σ"] ** 2
+utility_min_risk = portfolios["#2 optimized min σ (total)"]["Return E[R]"] - 1/2 * A * portfolios["#2 optimized min σ (total)"]["Risk σ"] ** 2
+
+fig, ax = plt.subplots(figsize = (18,12))
+ax.set_facecolor((0.95, 0.95, 0.99))
+ax.grid(c = (0.75, 0.75, 0.99))
+
+# Risk Free
+ax.plot(A, [risk_free] * 10, color = 'y', label = 'risk free', linewidth = 4)
+
+# Portfolio #1
+ax.scatter(A, utility_dummy, color = 'r',s = 50)
+ax.plot(A, utility_dummy, color = 'r', label = 'portfolio #1 (dummy)')
+
+# Portfolio #2 (max sr)
+ax.scatter(A, utility_max_sr, color = 'b',s = 50)
+ax.plot(A, utility_max_sr, color = 'b', label = 'portfolio #2 (max sr)')
+
+# Portfolio #2 (min risk)
+ax.scatter(A, utility_min_risk, color = 'black',s = 50)
+ax.plot(A, utility_min_risk, color = 'black', label = 'portfolio #2 (min risk)')
+
+ax.set_title('Utility Function U = E[r] - 1/2 * A * σ ^{2}', fontsize = 20)
+ax.set_xlabel('Risk Aversion (A)', fontsize = 16)
+ax.set_ylabel('Utility (U)', fontsize = 16)
+ax.set_ylim([0, 0.5])
+ax.legend(labelspacing = 1.2)
+
+
+portfolio = portfolios["#2 optimized max sr (total)"]
+ret       = portfolio['Return E[R]']
+risk      = portfolio['Risk σ']
+sr        = portfolio['Sharpe Ratio SR']
+utility   = ret - 1/2 * 3 * risk ** 2
+
+portfolio = pd.DataFrame([str(round(ret * 100, 2)) + "%", str(round(risk * 100, 2)) + "%", sr, str(round(utility * 100, 2) ) + "%"], index = ['Return E[R]', 'Risk σ', 'Sharpe Ratio SR', 'Utility U'] ,columns = ["Portfolio #2 optimized max sr "]).T
+portfolio
