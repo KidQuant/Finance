@@ -128,3 +128,98 @@ for instr in STD:
     label = "%.3f"%std
     plt.annotate(label, xy = (year, std), xytext=((-1)*50, 40),textcoords = 'offset points', ha = 'right', va='bottom', bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
       arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0'))
+
+VAR = STD ** 2
+VAR_avg = VAR.mean()
+
+VAR
+
+pd.DataFrame(VAR_avg, columns = ['Average VAR']).T
+
+# configuration - generate different colors & sizes
+c = [y + x for y, x in zip(APY_avg, STD_avg)]
+c = list(map(lambda x : x /max(c), c))
+s = list(map(lambda x : x * 600, c))
+
+
+# plot
+fig, ax = plt.subplots(figsize = (16,12))
+ax.set_title(r"Risk ($\sigma$) vs Return ($APY$) of all  instruments")
+ax.set_facecolor((0.95, 0.95, 0.99))
+ax.grid(c = (0.75, 0.75, 0.99))
+ax.set_xlabel(r"Standard Deviation $\sigma$")
+ax.set_ylabel(r"Annualized Percetaneg Yield $APY$ or $R_{effective}$")
+ax.scatter(STD_avg, APY_avg, s = s , c = c , cmap = "Blues", alpha = 0.4, edgecolors="grey", linewidth=2)
+ax.axhline(y = 0.0,xmin = 0 ,xmax = 5,c = "blue",linewidth = 1.5,zorder = 0,  linestyle = 'dashed')
+ax.axvline(x = 0.0,ymin = 0 ,ymax = 40,c = "blue",linewidth = 1.5,zorder = 0,  linestyle = 'dashed')
+for idx, instr in enumerate(list(STD.columns)):
+  ax.annotate(instr, (STD_avg[idx] + 0.01, APY_avg[idx]))
+
+  instruments = list(log_returns.columns)
+instruments
+
+def visualize_statistic(statistic, title, limit = 0):
+  # configuration
+  fig, ax = plt.subplots(figsize = (12,8))
+  ax.set_facecolor((0.95, 0.95, 0.99))
+  ax.grid(c = (0.75, 0.75, 0.99), axis = 'y')
+  colors = sns.color_palette('Reds', n_colors = len(statistic))
+  # visualize
+  barlist = ax.bar(x = np.arange(len(statistic)), height =  statistic)
+  for b, c in zip(barlist, colors):
+    b.set_color(c)
+  ax.axhline(y = limit, xmin = -1 ,xmax = 1,c = "blue",linewidth = 1.5,zorder = 0,  linestyle = 'dashed')
+
+  # configure more
+  for i, v in enumerate(statistic):
+      ax.text( i - 0.22,v + 0.01 , str(round(v,3)), color = 'blue', fontweight='bold')
+  plt.xticks(np.arange(len(statistic)), instruments)
+  plt.title(r"{}for every instrument (i) against market (m) S&P500".format(title))
+  plt.xlabel(r"Instrument")
+  plt.ylabel(r"{} value".format(title))
+  plt.show()
+
+def visualize_model(alpha, beta, data, model):
+  fig, axs = plt.subplots(4,3, figsize = (14,10),  constrained_layout = True)
+  # fig.tight_layout()
+  idx = 0
+  R_m = data["^GSPC"]
+  del data["^GSPC"]
+  for a, b, instr in zip(alpha, beta, data):
+    i, j = int(idx / 3), idx % 3
+    axs[i, j].set_title("Model : {} fitted for '{}'".format(model, instr))
+    axs[i, j].set_facecolor((0.95, 0.95, 0.99))
+    axs[i, j].grid(c = (0.75, 0.75, 0.99))
+    axs[i, j].set_xlabel(r"Market (S&P500) log returns")
+    axs[i, j].set_ylabel(r"{} log returns".format(instr))
+
+    R = data[instr]
+    y = a + b * R_m
+    axs[i, j].scatter(x = R_m, y = R, label = 'Returns'.format(instr))
+    axs[i, j].plot(R_m, y ,color = 'red', label = 'CAPM model')
+    idx += 1
+
+# [*] Risk-Free Asset : 13 Week Tbill (^IRX). Get the most recent value
+risk_free = web.DataReader('^IRX', data_source = 'yahoo', start = start, end = end)['Adj Close']
+risk_free = float(risk_free.tail(1))
+
+print("Risk-Free rate (Daily T-bill) = {}".format(risk_free))
+
+# [*] Market          : S&P 500 index (^GSPC) | Yahoo Finance for index pricing, '^GSPC' is the underlying for 'SPX' options.
+market = web.DataReader('^GSPC', data_source = 'yahoo', start=start, end=end)['Adj Close']
+market = market.rename("^GSPC")
+market_log_returns = market.pct_change()
+log_return_total = pd.concat([log_returns, market_log_returns], axis = 1).dropna()
+
+# Descriptive statistics
+# Return
+log_returns_total = pd.concat([log_returns, market_log_returns], axis=1).dropna()
+APR_total = log_returns_total.groupby([log_returns_total.index.year]).agg('sum')
+APR_avg_total = APR_total.mean()
+APR_avg_market = APR_avg_total['^GSPC']
+# RISK
+STD_total = log_return_total.groupby([log_return_total.index.year]).agg('std') * np.sqrt(N)
+STD_avg_total = STD_total.mean()
+STD_avg_market = STD_avg_total['^GSPC']
+
+pd.DataFrame(APR_avg_total, columns = ['Average APR']).T
